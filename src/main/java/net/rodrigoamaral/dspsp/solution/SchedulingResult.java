@@ -16,7 +16,8 @@ public class SchedulingResult {
     private final List<DoubleSolution> schedules;
     private final long computingTime;
 
-    private final boolean projectFinished;
+    @SuppressWarnings("unused")
+	private final boolean projectFinished;
 
     public SchedulingResult(List<DoubleSolution> result, long computingTime, boolean projectFinished) {
         this.schedules = result;

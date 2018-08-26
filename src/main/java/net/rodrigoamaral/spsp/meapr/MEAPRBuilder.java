@@ -1,13 +1,10 @@
 package net.rodrigoamaral.spsp.meapr;
 
-import net.rodrigoamaral.jmetal.util.archive.impl.IdealArchive;
-import net.rodrigoamaral.jmetal.util.archive.impl.MGAArchive;
 import org.uma.jmetal.operator.MutationOperator;
 import org.uma.jmetal.problem.DoubleProblem;
 import org.uma.jmetal.qualityindicator.impl.hypervolume.PISAHypervolume;
 import org.uma.jmetal.solution.DoubleSolution;
 import org.uma.jmetal.util.AlgorithmBuilder;
-import org.uma.jmetal.util.archive.Archive;
 import org.uma.jmetal.util.archive.BoundedArchive;
 import org.uma.jmetal.util.archive.impl.AdaptiveGridArchive;
 import org.uma.jmetal.util.archive.impl.CrowdingDistanceArchive;
@@ -15,6 +12,9 @@ import org.uma.jmetal.util.archive.impl.HypervolumeArchive;
 import org.uma.jmetal.util.evaluator.SolutionListEvaluator;
 import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 import org.uma.jmetal.util.pseudorandom.PseudoRandomGenerator;
+
+import net.rodrigoamaral.jmetal.util.archive.impl.IdealArchive;
+import net.rodrigoamaral.jmetal.util.archive.impl.MGAArchive;
 
 public class MEAPRBuilder implements AlgorithmBuilder<MEAPR> {
 
@@ -45,7 +45,8 @@ public class MEAPRBuilder implements AlgorithmBuilder<MEAPR> {
     protected SolutionListEvaluator<DoubleSolution> evaluator;
 
 
-    public MEAPRBuilder(DoubleProblem problem, int swarmSize, int archiveSize, ArchiveType archiveType,
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+	public MEAPRBuilder(DoubleProblem problem, int swarmSize, int archiveSize, ArchiveType archiveType,
                         MutationOperator<DoubleSolution> mutationOperator,
                         SolutionListEvaluator<DoubleSolution> evaluator) {
         this.problem = problem;

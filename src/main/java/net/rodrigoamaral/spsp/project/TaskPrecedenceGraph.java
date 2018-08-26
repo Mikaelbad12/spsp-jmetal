@@ -43,7 +43,8 @@ public class TaskPrecedenceGraph {
                 visit(i);
     }
 
-    private void visit(int u) {
+    @SuppressWarnings("rawtypes")
+	private void visit(int u) {
         visited.set(u, DFS_BLACK);
         Iterator it = successors.get(u).iterator();
         while (it.hasNext()) {

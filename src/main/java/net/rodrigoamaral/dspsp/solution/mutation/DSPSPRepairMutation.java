@@ -9,6 +9,7 @@ import org.uma.jmetal.solution.util.RepairDoubleSolutionAtBounds;
 import org.uma.jmetal.util.JMetalException;
 import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 
+@SuppressWarnings("serial")
 public class DSPSPRepairMutation implements MutationOperator<DoubleSolution> {
     private static final double DEFAULT_PROBABILITY = 0.01 ;
     private static final double DEFAULT_DISTRIBUTION_INDEX = 20.0 ;

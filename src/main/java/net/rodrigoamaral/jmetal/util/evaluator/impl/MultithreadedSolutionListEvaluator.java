@@ -39,6 +39,7 @@ public class MultithreadedSolutionListEvaluator<S extends Solution<?>> implement
     JMetalLogger.logger.info("Number of cores: " + numberOfThreads);
   }
 
+  @SuppressWarnings({ "rawtypes", "unchecked" })
   @Override
   public List<S> evaluate(List<S> solutionList, Problem<S> problem) {
       if (problem instanceof ConstrainedProblem) {

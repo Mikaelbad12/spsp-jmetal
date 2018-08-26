@@ -1,19 +1,23 @@
 package net.rodrigoamaral.dspsp.adapters;
 
-import net.rodrigoamaral.dspsp.config.DynamicProjectConfigLoader;
-import net.rodrigoamaral.dspsp.constraints.*;
-import net.rodrigoamaral.dspsp.exceptions.InvalidSolutionException;
-import net.rodrigoamaral.dspsp.objectives.Efficiency;
-import net.rodrigoamaral.dspsp.project.DynamicEmployee;
-import net.rodrigoamaral.dspsp.project.DynamicProject;
-import net.rodrigoamaral.dspsp.project.tasks.DynamicTask;
-import net.rodrigoamaral.dspsp.solution.DedicationMatrix;
-import net.rodrigoamaral.logging.SPSPLogger;
-import org.uma.jmetal.solution.DoubleSolution;
-
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
+
+import org.uma.jmetal.solution.DoubleSolution;
+
+import net.rodrigoamaral.dspsp.config.DynamicProjectConfigLoader;
+import net.rodrigoamaral.dspsp.constraints.AllTasksAllocatedConstraint;
+import net.rodrigoamaral.dspsp.constraints.DSPSPConstraintEvaluator;
+import net.rodrigoamaral.dspsp.constraints.IConstraintEvaluator;
+import net.rodrigoamaral.dspsp.constraints.MaximumHeadcountConstraint;
+import net.rodrigoamaral.dspsp.constraints.NoEmployeeOverworkConstraint;
+import net.rodrigoamaral.dspsp.constraints.TaskSkillsConstraint;
+import net.rodrigoamaral.dspsp.exceptions.InvalidSolutionException;
+import net.rodrigoamaral.dspsp.objectives.Efficiency;
+import net.rodrigoamaral.dspsp.project.DynamicProject;
+import net.rodrigoamaral.dspsp.solution.DedicationMatrix;
+import net.rodrigoamaral.logging.SPSPLogger;
 
 /**
  *

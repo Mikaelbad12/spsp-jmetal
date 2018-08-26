@@ -10,6 +10,7 @@ import org.uma.jmetal.util.evaluator.impl.SequentialSolutionListEvaluator;
 import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 import org.uma.jmetal.util.pseudorandom.PseudoRandomGenerator;
 
+@SuppressWarnings("rawtypes")
 public class MultiSwarmMEAPRBuilder implements AlgorithmBuilder {
 
     private DoubleProblem problem;

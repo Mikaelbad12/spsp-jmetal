@@ -1,14 +1,15 @@
 package net.rodrigoamaral.algorithms.ms2mo;
 
-import net.rodrigoamaral.algorithms.ISwarm;
+import java.util.List;
+
 import org.uma.jmetal.algorithm.Algorithm;
 import org.uma.jmetal.solution.DoubleSolution;
 import org.uma.jmetal.util.archive.Archive;
 import org.uma.jmetal.util.archive.impl.NonDominatedSolutionListArchive;
-import org.uma.jmetal.util.evaluator.SolutionListEvaluator;
 
-import java.util.List;
+import net.rodrigoamaral.algorithms.ISwarm;
 
+@SuppressWarnings({ "serial", "rawtypes" })
 public class MS2MO implements Algorithm {
 
     private List<ISwarm> swarms;
@@ -94,7 +95,8 @@ public class MS2MO implements Algorithm {
     /**
      * Merges all leaders into a global archive
      */
-    private void mergeGlobalArchive() {
+    @SuppressWarnings("unchecked")
+	private void mergeGlobalArchive() {
         for (ISwarm swarm: swarms) {
             Archive archive = swarm.getLeaders();
             for (int i = 0; i < archive.size(); i++) {

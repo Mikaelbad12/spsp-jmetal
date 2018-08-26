@@ -18,6 +18,7 @@ import java.util.List;
  * @param <S>
  */
 
+@SuppressWarnings({"serial", "rawtypes", "unchecked"})
 public class MGAArchive<S extends Solution<?>> extends AbstractBoundedArchive<S> {
 
     public static int DOMINATED_BY = -1;

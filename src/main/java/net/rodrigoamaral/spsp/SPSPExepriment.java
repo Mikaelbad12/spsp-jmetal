@@ -10,7 +10,8 @@ import java.util.List;
 
 public class SPSPExepriment {
 
-    public static void main(String[] args) {
+    @SuppressWarnings("unused")
+	public static void main(String[] args) {
         if (args.length != 1) {
             throw new JMetalException("Missing argument: experimentBaseDirectory") ;
         }

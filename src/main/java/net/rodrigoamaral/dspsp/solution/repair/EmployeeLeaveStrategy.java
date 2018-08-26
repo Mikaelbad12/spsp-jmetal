@@ -1,20 +1,19 @@
 package net.rodrigoamaral.dspsp.solution.repair;
 
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import org.uma.jmetal.solution.DoubleSolution;
+
 import net.rodrigoamaral.dspsp.adapters.SolutionConverter;
 import net.rodrigoamaral.dspsp.project.DynamicEmployee;
 import net.rodrigoamaral.dspsp.project.DynamicProject;
 import net.rodrigoamaral.dspsp.project.tasks.DynamicTask;
 import net.rodrigoamaral.dspsp.project.tasks.TaskManager;
 import net.rodrigoamaral.logging.SPSPLogger;
-import org.uma.jmetal.solution.DoubleSolution;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import static java.lang.Double.max;
 
 public class EmployeeLeaveStrategy extends ScheduleRepairStrategy {
 

@@ -3,8 +3,6 @@ package net.rodrigoamaral.spsp.objectives;
 import net.rodrigoamaral.spsp.project.Project;
 import net.rodrigoamaral.spsp.solution.DedicationMatrix;
 
-import java.util.List;
-
 /**
  *
  * Basic interface for a class which evaluates all objectives

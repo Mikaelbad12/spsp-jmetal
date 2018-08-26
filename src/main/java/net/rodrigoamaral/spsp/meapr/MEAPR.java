@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+@SuppressWarnings("serial")
 public class MEAPR extends AbstractParticleSwarmOptimization<DoubleSolution, List<DoubleSolution>> {
 
     private DoubleProblem problem;
@@ -118,7 +119,8 @@ public class MEAPR extends AbstractParticleSwarmOptimization<DoubleSolution, Lis
         return maxIterations < iterations;
     }
 
-    @Override
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+	@Override
     protected List createInitialSwarm() {
         List<DoubleSolution> swarm = new ArrayList<>(swarmSize);
         DoubleSolution newSolution;
@@ -150,7 +152,8 @@ public class MEAPR extends AbstractParticleSwarmOptimization<DoubleSolution, Lis
         }
     }
 
-    @Override
+    @SuppressWarnings("rawtypes")
+	@Override
     protected void initializeVelocity(List swarm) {
         for (int i = 0; i < swarmSize; i++) {
             for (int j = 0; j < problem.getNumberOfVariables(); j++) {

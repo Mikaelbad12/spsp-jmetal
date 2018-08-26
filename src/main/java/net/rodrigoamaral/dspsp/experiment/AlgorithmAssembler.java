@@ -1,12 +1,8 @@
 package net.rodrigoamaral.dspsp.experiment;
 
-import net.rodrigoamaral.algorithms.ISwarm;
-import net.rodrigoamaral.algorithms.ms2mo.MS2MOBuilder;
-import net.rodrigoamaral.algorithms.nsgaii.NSGAIIDynamicBuilder;
-import net.rodrigoamaral.algorithms.smpso.SMPSOBuilder;
-import net.rodrigoamaral.algorithms.smpso.SMPSODynamicBuilder;
-import net.rodrigoamaral.dspsp.solution.mutation.DSPSPRepairMutation;
-import net.rodrigoamaral.jmetal.util.evaluator.impl.SequentialSolutionListEvaluator;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.uma.jmetal.algorithm.Algorithm;
 import org.uma.jmetal.algorithm.multiobjective.nsgaii.NSGAIIBuilder;
 import org.uma.jmetal.operator.CrossoverOperator;
@@ -23,8 +19,12 @@ import org.uma.jmetal.util.archive.impl.CrowdingDistanceArchive;
 import org.uma.jmetal.util.comparator.RankingAndCrowdingDistanceComparator;
 import org.uma.jmetal.util.pseudorandom.impl.MersenneTwisterGenerator;
 
-import java.util.ArrayList;
-import java.util.List;
+import net.rodrigoamaral.algorithms.ISwarm;
+import net.rodrigoamaral.algorithms.ms2mo.MS2MOBuilder;
+import net.rodrigoamaral.algorithms.nsgaii.NSGAIIDynamicBuilder;
+import net.rodrigoamaral.algorithms.smpso.SMPSOBuilder;
+import net.rodrigoamaral.algorithms.smpso.SMPSODynamicBuilder;
+import net.rodrigoamaral.jmetal.util.evaluator.impl.SequentialSolutionListEvaluator;
 
 /**
  * Assembles an algorithm from given parameters for experiment purposes.
@@ -75,7 +75,8 @@ public class AlgorithmAssembler {
         return objectiveEvaluations;
     }
 
-    public Algorithm<List<DoubleSolution>> assemble(Problem<DoubleSolution> problem) {
+    @SuppressWarnings("unchecked")
+	public Algorithm<List<DoubleSolution>> assemble(Problem<DoubleSolution> problem) {
         CrossoverOperator<DoubleSolution> crossover;
         MutationOperator<DoubleSolution> mutation;
         SelectionOperator<List<DoubleSolution>, DoubleSolution> selection;

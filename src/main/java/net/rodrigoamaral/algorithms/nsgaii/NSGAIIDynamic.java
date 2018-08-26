@@ -12,11 +12,13 @@ import org.uma.jmetal.util.evaluator.SolutionListEvaluator;
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressWarnings({ "serial", "rawtypes" })
 public class NSGAIIDynamic extends NSGAII {
 
     private List<DoubleSolution> initialPopulation;
 
-    public NSGAIIDynamic(Problem problem, int maxEvaluations, int populationSize, CrossoverOperator crossoverOperator, MutationOperator mutationOperator, SelectionOperator selectionOperator, SolutionListEvaluator evaluator, List<DoubleSolution> initialPopulation) {
+    @SuppressWarnings("unchecked")
+	public NSGAIIDynamic(Problem problem, int maxEvaluations, int populationSize, CrossoverOperator crossoverOperator, MutationOperator mutationOperator, SelectionOperator selectionOperator, SolutionListEvaluator evaluator, List<DoubleSolution> initialPopulation) {
         super(problem, maxEvaluations, populationSize, crossoverOperator, mutationOperator, selectionOperator, evaluator);
         this.initialPopulation = initialPopulation;
     }

@@ -28,7 +28,8 @@ import java.util.List;
 @SuppressWarnings("serial")
 public class SequentialSolutionListEvaluator<S extends Solution<?>> implements SolutionListEvaluator<S> {
 
-  @Override
+  @SuppressWarnings({ "unchecked", "rawtypes" })
+@Override
   public List<S> evaluate(List<S> solutionList, Problem<S> problem) throws JMetalException {
       if (problem instanceof ConstrainedProblem) {
         solutionList.stream().forEach(s -> {

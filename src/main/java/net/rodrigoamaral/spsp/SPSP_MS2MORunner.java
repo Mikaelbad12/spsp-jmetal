@@ -1,14 +1,9 @@
 package net.rodrigoamaral.spsp;
 
-import net.rodrigoamaral.algorithms.ISwarm;
-import net.rodrigoamaral.algorithms.ms2mo.MS2MO;
-import net.rodrigoamaral.algorithms.ms2mo.MS2MOBuilder;
-import net.rodrigoamaral.algorithms.smpso.SMPSOBuilder;
-import net.rodrigoamaral.jmetal.util.evaluator.impl.SequentialSolutionListEvaluator;
-import net.rodrigoamaral.spsp.SPSProblem;
-import net.rodrigoamaral.spsp.meapr.MultiSwarmMEAPRBuilder;
-import org.uma.jmetal.algorithm.Algorithm;
+import java.io.FileNotFoundException;
+import java.util.List;
 
+import org.uma.jmetal.algorithm.Algorithm;
 import org.uma.jmetal.operator.MutationOperator;
 import org.uma.jmetal.operator.impl.mutation.PolynomialMutation;
 import org.uma.jmetal.problem.DoubleProblem;
@@ -19,14 +14,15 @@ import org.uma.jmetal.util.AlgorithmRunner;
 import org.uma.jmetal.util.JMetalLogger;
 import org.uma.jmetal.util.archive.BoundedArchive;
 import org.uma.jmetal.util.archive.impl.CrowdingDistanceArchive;
-
 import org.uma.jmetal.util.fileoutput.SolutionListOutput;
 import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
 import org.uma.jmetal.util.pseudorandom.JMetalRandom;
 import org.uma.jmetal.util.pseudorandom.impl.MersenneTwisterGenerator;
 
-import java.io.FileNotFoundException;
-import java.util.List;
+import net.rodrigoamaral.algorithms.ISwarm;
+import net.rodrigoamaral.algorithms.ms2mo.MS2MOBuilder;
+import net.rodrigoamaral.algorithms.smpso.SMPSOBuilder;
+import net.rodrigoamaral.jmetal.util.evaluator.impl.SequentialSolutionListEvaluator;
 
 /**
  * Class for configuring and running the MS2MO algorithm
@@ -60,7 +56,8 @@ public class SPSP_MS2MORunner extends AbstractAlgorithmRunner {
      * Invoking command:
     java org.uma.jmetal.runner.multiobjective.SPSP_MultiSwarmMEAPRRunner problemName [referenceFront]
      */
-    public static void main(String[] args) throws Exception {
+    @SuppressWarnings({ "unused", "unchecked" })
+	public static void main(String[] args) throws Exception {
         DoubleProblem problem;
         Algorithm<List<DoubleSolution>> algorithm;
         MutationOperator<DoubleSolution> mutation;

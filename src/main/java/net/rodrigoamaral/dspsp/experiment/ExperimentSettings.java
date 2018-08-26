@@ -10,7 +10,6 @@ import java.util.List;
  *
  * @author Rodrigo Amaral
  */
-@SuppressWarnings("unused")
 public class ExperimentSettings {
 
     private Integer numberOfRuns;

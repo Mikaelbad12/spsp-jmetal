@@ -9,11 +9,13 @@ import org.uma.jmetal.solution.DoubleSolution;
 
 import java.util.List;
 
+@SuppressWarnings("rawtypes")
 public class NSGAIIDynamicBuilder extends NSGAIIBuilder{
 
     private List<DoubleSolution> initialPopulation;
 
-    public NSGAIIDynamicBuilder(Problem problem, CrossoverOperator crossoverOperator, MutationOperator mutationOperator) {
+    @SuppressWarnings("unchecked")
+	public NSGAIIDynamicBuilder(Problem problem, CrossoverOperator crossoverOperator, MutationOperator mutationOperator) {
         super(problem, crossoverOperator, mutationOperator);
     }
 

@@ -1,15 +1,15 @@
 package net.rodrigoamaral.dspsp.results;
 
-import net.rodrigoamaral.dspsp.experiment.metrics.ResultNormalizer;
-import net.rodrigoamaral.logging.SPSPLogger;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.util.List;
+
 import org.uma.jmetal.util.JMetalException;
 import org.uma.jmetal.util.fileoutput.FileOutputContext;
 import org.uma.jmetal.util.fileoutput.impl.DefaultFileOutputContext;
 
-import java.io.BufferedWriter;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.List;
+import net.rodrigoamaral.dspsp.experiment.metrics.ResultNormalizer;
+import net.rodrigoamaral.logging.SPSPLogger;
 
 /**
  * Outputs normalized objective values to file

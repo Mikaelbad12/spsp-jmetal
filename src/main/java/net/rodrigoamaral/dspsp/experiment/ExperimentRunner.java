@@ -1,12 +1,19 @@
 package net.rodrigoamaral.dspsp.experiment;
 
+import java.io.FileNotFoundException;
+import java.util.List;
+
+import org.apache.commons.lang3.time.DurationFormatUtils;
+import org.uma.jmetal.algorithm.Algorithm;
+import org.uma.jmetal.solution.DoubleSolution;
+import org.uma.jmetal.util.AlgorithmRunner;
+
 import net.rodrigoamaral.dspsp.DSPSProblem;
 import net.rodrigoamaral.dspsp.decision.ComparisonMatrix;
 import net.rodrigoamaral.dspsp.decision.DecisionMaker;
 import net.rodrigoamaral.dspsp.project.DynamicEmployee;
 import net.rodrigoamaral.dspsp.project.DynamicProject;
 import net.rodrigoamaral.dspsp.project.events.DynamicEvent;
-import net.rodrigoamaral.dspsp.project.events.EventType;
 import net.rodrigoamaral.dspsp.results.SolutionFileWriter;
 import net.rodrigoamaral.dspsp.solution.DynamicPopulationCreator;
 import net.rodrigoamaral.dspsp.solution.SchedulingHistory;
@@ -15,13 +22,6 @@ import net.rodrigoamaral.dspsp.solution.repair.EmployeeLeaveStrategy;
 import net.rodrigoamaral.dspsp.solution.repair.EmployeeReturnStrategy;
 import net.rodrigoamaral.dspsp.solution.repair.IScheduleRepairStrategy;
 import net.rodrigoamaral.logging.SPSPLogger;
-import org.apache.commons.lang3.time.DurationFormatUtils;
-import org.uma.jmetal.algorithm.Algorithm;
-import org.uma.jmetal.solution.DoubleSolution;
-import org.uma.jmetal.util.AlgorithmRunner;
-
-import java.io.FileNotFoundException;
-import java.util.List;
 
 /**
  * Runs experiments on DSPSP problem.

@@ -188,11 +188,13 @@ public class Experimento {
 //				trueParetoFrontMatrix, numberOfObjectives);
 //	} // getIGD
 
-    public double getGD(Front front, Front referenceFront) {
+    @SuppressWarnings("rawtypes")
+	public double getGD(Front front, Front referenceFront) {
         return new GenerationalDistance().generationalDistance(front, referenceFront);
     } // getGD
 
-    public double getIGD(Front front, Front referenceFront) {
+    @SuppressWarnings("rawtypes")
+	public double getIGD(Front front, Front referenceFront) {
         return new InvertedGenerationalDistance().invertedGenerationalDistance(front, referenceFront);
     } // getIGD
 
@@ -257,6 +259,7 @@ public class Experimento {
 
 	}
 
+	@SuppressWarnings({ "unused", "rawtypes" })
 	public static void main(String[] args) {
 		// Experimento experimento = new
 		// Experimento("C:\\Users\\treinamento\\Desktop\\meapr\\teste.txt",
@@ -359,7 +362,8 @@ public class Experimento {
 		 */
 	}
 
-    private List<Solution> getSolutionList(int i) {
+    @SuppressWarnings("rawtypes")
+	private List<Solution> getSolutionList(int i) {
 //        double[][] solutionSet = getSolutionSetObjMatrix(i);
 //        DedicationMatrix dm =
         return null;

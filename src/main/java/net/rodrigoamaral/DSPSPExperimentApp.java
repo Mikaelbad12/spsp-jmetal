@@ -2,7 +2,6 @@ package net.rodrigoamaral;
 
 import net.rodrigoamaral.dspsp.experiment.ExperimentCLI;
 import net.rodrigoamaral.dspsp.experiment.ExperimentRunner;
-import net.rodrigoamaral.logging.SPSPLogger;
 
 /**
  * DSPSP experiment entry point.

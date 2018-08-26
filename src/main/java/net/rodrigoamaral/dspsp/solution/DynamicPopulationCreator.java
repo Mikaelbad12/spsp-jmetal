@@ -91,7 +91,8 @@ public class DynamicPopulationCreator {
     }
 
 
-    private List<DoubleSolution> getRandomSublist(List<DoubleSolution> list, double proportionalSize) {
+    @SuppressWarnings("finally")
+	private List<DoubleSolution> getRandomSublist(List<DoubleSolution> list, double proportionalSize) {
         List<DoubleSolution> randomSublist = new ArrayList<>();
 
         int n = (int) Math.round(size * proportionalSize);

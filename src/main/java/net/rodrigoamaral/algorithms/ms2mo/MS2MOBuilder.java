@@ -1,6 +1,8 @@
 package net.rodrigoamaral.algorithms.ms2mo;
 
-import net.rodrigoamaral.algorithms.ISwarm;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.uma.jmetal.operator.MutationOperator;
 import org.uma.jmetal.operator.impl.mutation.PolynomialMutation;
 import org.uma.jmetal.problem.DoubleProblem;
@@ -9,16 +11,16 @@ import org.uma.jmetal.util.AlgorithmBuilder;
 import org.uma.jmetal.util.evaluator.SolutionListEvaluator;
 import org.uma.jmetal.util.evaluator.impl.SequentialSolutionListEvaluator;
 
-import java.util.ArrayList;
-import java.util.List;
+import net.rodrigoamaral.algorithms.ISwarm;
 
+@SuppressWarnings({"rawtypes", "unused"})
 public class MS2MOBuilder implements AlgorithmBuilder {
 
     private DoubleProblem problem;
     private int maxIterations;
     private int swapInterval;
     protected int archiveSize;
-    private ArchiveType firstArchiveType;
+	private ArchiveType firstArchiveType;
     private ArchiveType secondArchiveType;
     protected MutationOperator<DoubleSolution> mutationOperator;
     protected SolutionListEvaluator<DoubleSolution> evaluator;

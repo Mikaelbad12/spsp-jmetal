@@ -15,6 +15,7 @@ import java.util.List;
  * Creates the initial swarm from a solution list.
  *
  */
+@SuppressWarnings("serial")
 public class SMPSODynamic extends SMPSO implements ISwarm {
 
     private List<DoubleSolution> initialPopulation;

@@ -54,7 +54,8 @@ public class SPSP_MEAPRRunner extends AbstractAlgorithmRunner {
    * Invoking command:
   java org.uma.jmetal.runner.multiobjective.SPSP_MEAPRRunner problemName [referenceFront]
    */
-  public static void main(String[] args) throws Exception {
+  @SuppressWarnings("unused")
+public static void main(String[] args) throws Exception {
     DoubleProblem problem;
     Algorithm<List<DoubleSolution>> algorithm;
     MutationOperator<DoubleSolution> mutation;

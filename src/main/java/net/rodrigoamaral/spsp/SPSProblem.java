@@ -16,13 +16,15 @@ import java.io.FileNotFoundException;
  *
  */
 //public class SPSProblem extends AbstractDoubleProblem implements ConstrainedProblem<DoubleSolution>{
+@SuppressWarnings("serial")
 public class SPSProblem extends AbstractDoubleProblem {
 
     private JMetalSPSPAdapter spsp;
     public OverallConstraintViolation<DoubleSolution> overallConstraintViolationDegree;
     public NumberOfViolatedConstraints<DoubleSolution> numberOfViolatedConstraints;
     private static final double PENALTY = 1.5;
-    private int evaluationCounter;
+    @SuppressWarnings("unused")
+	private int evaluationCounter;
 
 
     public SPSProblem(String projectPropertiesFileName) throws FileNotFoundException {

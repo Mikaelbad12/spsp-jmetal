@@ -12,6 +12,7 @@ import java.util.Comparator;
 import java.util.List;
 
 
+@SuppressWarnings({"serial", "rawtypes", "unchecked"})
 public class IdealArchive<S extends Solution<?>> extends AbstractBoundedArchive<S> {
 
     private int objectives_;
@@ -35,7 +36,7 @@ public class IdealArchive<S extends Solution<?>> extends AbstractBoundedArchive<
         comparator = new DominanceComparator();
     }
 
-    @Override
+	@Override
     public void prune() {
         if (getSolutionList().size() > getMaxSize()) {
             Solution ideal = getIdealSolutions(getSolutionList(), false).get(objectives_).get(0);

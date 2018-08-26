@@ -11,6 +11,7 @@ import org.uma.jmetal.util.evaluator.SolutionListEvaluator;
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressWarnings({ "serial", "rawtypes" })
 public class MultiSwarmMEAPR implements Algorithm {
 
     private List<MEAPR> swarms;
@@ -177,7 +178,8 @@ public class MultiSwarmMEAPR implements Algorithm {
     /**
      * Merges all leaders into a global archive
      */
-    private void mergeGlobalArchive() {
+    @SuppressWarnings("unchecked")
+	private void mergeGlobalArchive() {
         for (MEAPR swarm: swarms) {
             Archive archive = swarm.getLeaders();
             for (int i = 0; i < archive.size(); i++) {

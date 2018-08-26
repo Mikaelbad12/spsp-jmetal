@@ -3,7 +3,8 @@ package net.rodrigoamaral.dspsp.solution;
 public class SolutionEncoder {
     private int employees;
     private int tasks;
-    private double[] dedicationMatrix;
+    @SuppressWarnings("unused")
+	private double[] dedicationMatrix;
 
     public int size() {
         return employees * tasks;

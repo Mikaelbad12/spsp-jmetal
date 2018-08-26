@@ -17,6 +17,7 @@ import java.io.FileNotFoundException;
  * @author Rodrigo Amaral
  *
  */
+@SuppressWarnings("serial")
 public class DSPSProblem extends AbstractDoubleProblem {
 
     private JMetalDSPSPAdapter dspsp;
