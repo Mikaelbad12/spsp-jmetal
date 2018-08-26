@@ -8,6 +8,10 @@
 /VAR.tsv
 /jMetal.log.*
 *.iml
+.settings
+.classpath
+.project
+bin/
 
 *.class
 
