@@ -43,10 +43,10 @@ public class ExperimentCLI {
 
         if (cmd.hasOption("s")) {
             settingsFilename = cmd.getOptionValue("s");
-        } else {
-            System.out.println("Settings file missing.\n");
-            formatter.printHelp(PROGRAM_NAME, options);
-            System.exit(0);
+//        } else {
+//            System.out.println("Settings file missing.\n");
+//            formatter.printHelp(PROGRAM_NAME, options);
+//            System.exit(0);
         }
 
         final ExperimentSettingsParser parser = new ExperimentSettingsParser();

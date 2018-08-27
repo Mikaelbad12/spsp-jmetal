@@ -1,11 +1,12 @@
 {
+  "numberOfRuns": 1,
   "instanceFiles": [
-    "project-conf/dynamic/dynamic_example_new1.json",
-    "project-conf/dynamic/dynamic_example_new2.json"
+    "project-conf/dynamic/dynamic_example_new1.json"
   ],
   "algorithms": [
-    "MS2MO",
-    "SMPSO",
-    "NSGAII"
-  ]
+    "GDE3",
+    "MOEAD-DE"
+  ],
+  "objectiveEvaluations": 12000,
+  "populationSize": 100
 }

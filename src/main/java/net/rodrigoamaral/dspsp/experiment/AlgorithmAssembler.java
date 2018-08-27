@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.uma.jmetal.algorithm.Algorithm;
 import org.uma.jmetal.algorithm.multiobjective.gde3.GDE3Builder;
-import org.uma.jmetal.algorithm.multiobjective.moead.MOEADBuilder;
 import org.uma.jmetal.algorithm.multiobjective.nsgaii.NSGAIIBuilder;
 import org.uma.jmetal.operator.CrossoverOperator;
 import org.uma.jmetal.operator.MutationOperator;
@@ -22,6 +21,7 @@ import org.uma.jmetal.util.comparator.RankingAndCrowdingDistanceComparator;
 import org.uma.jmetal.util.pseudorandom.impl.MersenneTwisterGenerator;
 
 import net.rodrigoamaral.algorithms.ISwarm;
+import net.rodrigoamaral.algorithms.moead.MOEADDEBuilder;
 import net.rodrigoamaral.algorithms.ms2mo.MS2MOBuilder;
 import net.rodrigoamaral.algorithms.nsgaii.NSGAIIDynamicBuilder;
 import net.rodrigoamaral.algorithms.smpso.SMPSOBuilder;
@@ -44,12 +44,16 @@ public class AlgorithmAssembler {
     private int populationSize = 100;
 
     public AlgorithmAssembler(final String algorithmID, ExperimentSettings settings) {
-        this.objectiveEvaluations = settings.getObjectiveEvaluations();
-        this.numberOfSwarms = settings.getNumberOfSwarms();
-        this.swarmSize = settings.getSwarmSize();
+        this.objectiveEvaluations = getValueOrDefault(settings.getObjectiveEvaluations(), objectiveEvaluations);
+        this.numberOfSwarms = getValueOrDefault(settings.getNumberOfSwarms(), numberOfSwarms);
+        this.swarmSize = getValueOrDefault(settings.getSwarmSize(), swarmSize);
         this.algorithmID = algorithmID;
-        this.populationSize = settings.getPopulationSize();
+        this.populationSize = getValueOrDefault(settings.getPopulationSize(), populationSize);
         maxMultiSwarmIterations = getMaxMultiSwarmIterations();
+    }
+    
+    private int getValueOrDefault(Integer o, int defaultValue){
+    	return o != null ? o : defaultValue;
     }
 
     private int getMaxMultiSwarmIterations() {
@@ -151,8 +155,8 @@ public class AlgorithmAssembler {
         			.setPopulationSize(populationSize)
         			.setMaxEvaluations(getMaxIterations())
         			.build();
-        } else if("MOEA/D-DE".equals(algorithmID.toUpperCase())){
-        	return new MOEADBuilder(problem, MOEADBuilder.Variant.MOEAD)
+        } else if("MOEAD-DE".equals(algorithmID.toUpperCase())){
+        	return new MOEADDEBuilder(problem)
         			.setPopulationSize(populationSize)
         			.setMaxEvaluations(getMaxIterations())
         			.setNeighborhoodSelectionProbability(0.9)
