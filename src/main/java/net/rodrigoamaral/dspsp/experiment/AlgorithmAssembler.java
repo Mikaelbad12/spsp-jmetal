@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.uma.jmetal.algorithm.Algorithm;
+import org.uma.jmetal.algorithm.multiobjective.gde3.GDE3Builder;
+import org.uma.jmetal.algorithm.multiobjective.moead.MOEADBuilder;
 import org.uma.jmetal.algorithm.multiobjective.nsgaii.NSGAIIBuilder;
 import org.uma.jmetal.operator.CrossoverOperator;
 import org.uma.jmetal.operator.MutationOperator;
@@ -144,6 +146,18 @@ public class AlgorithmAssembler {
                     .addSwarms(swarms)
                     .setMaxIterations(maxMultiSwarmIterations)
                     .build();
+        } else if("GDE3".equals(algorithmID.toUpperCase())){
+        	return new GDE3Builder((DoubleProblem) problem)
+        			.setPopulationSize(populationSize)
+        			.setMaxEvaluations(getMaxIterations())
+        			.build();
+        } else if("MOEA/D-DE".equals(algorithmID.toUpperCase())){
+        	return new MOEADBuilder(problem, MOEADBuilder.Variant.MOEAD)
+        			.setPopulationSize(populationSize)
+        			.setMaxEvaluations(getMaxIterations())
+        			.setNeighborhoodSelectionProbability(0.9)
+        			.setDataDirectory("MOEAD_Weights")
+        			.build();
         }
         else {
             throw new IllegalArgumentException("Invalid algorithm ID: " + algorithmID);
