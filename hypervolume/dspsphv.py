@@ -7,7 +7,7 @@ from hypervolume import hypervolume as hv
 
 
 BASE_DIR = "results"
-
+#precisa http://lopez-ibanez.eu/hypervolume para funcionar
 
 def list_result_files(result_type="NOB", base_dir=BASE_DIR):
     path_pattern = "../{}/**/{}/*.csv".format(BASE_DIR, result_type)
@@ -22,8 +22,9 @@ def dim(fname):
 def extract_instance_data(fname):
     filepath, filename = os.path.split(fname)
     filename, ext = os.path.splitext(filename)
-    alg_name = filepath.split("/")[2]
-    exec_num = filepath.split("/")[-2]
+    print(filepath)
+    alg_name = filepath.split(os.sep)[2]
+    exec_num = filepath.split(os.sep)[-2]
     tmp = filename.split("-")
     return [alg_name, tmp[2] + "-" + tmp[3], exec_num, tmp[5]]
 
