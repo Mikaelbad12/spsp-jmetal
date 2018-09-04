@@ -155,7 +155,7 @@ public class AlgorithmAssembler {
         			.setPopulationSize(populationSize)
         			.setMaxEvaluations(getMaxIterations())
         			.build();
-        } else if("MOEAD-DE".equals(algorithmID.toUpperCase())){
+        } else if("MOEADDE".equals(algorithmID.toUpperCase())){
         	return new MOEADDEBuilder(problem)
         			.setPopulationSize(populationSize)
         			.setMaxEvaluations(getMaxIterations())

@@ -5,7 +5,7 @@
   ],
   "algorithms": [
     "GDE3",
-    "MOEAD-DE"
+    "MOEADDE"
   ],
   "objectiveEvaluations": 12000,
   "populationSize": 100
