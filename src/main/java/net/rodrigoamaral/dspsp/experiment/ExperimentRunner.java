@@ -182,6 +182,13 @@ public class ExperimentRunner {
         }
 
         AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm).execute();
+        
+        if(problem.isUnsolvable()) {
+        	SPSPLogger.info("The event that happened made the problem unsolvable because there are tasks that can't be executed");
+        	return new SchedulingResult(history.get(reschedulings - 1),
+                    algorithmRunner.getComputingTime(),
+                    problem.getProject().isFinished());
+        }
 
         return new SchedulingResult(algorithm.getResult(),
                 algorithmRunner.getComputingTime(),

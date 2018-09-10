@@ -48,6 +48,8 @@ public class JMetalDSPSPAdapter {
     private IConstraintEvaluator constraintEvaluator;
 
     private SolutionConverter converter;
+    
+    private boolean missingSkillsForTask;
 
     /**
      * Creates a {@link DynamicProject} instance and evaluate all objectives and constraints
@@ -113,7 +115,7 @@ public class JMetalDSPSPAdapter {
     public List<Double> getUpperLimit() {
         return populateLimitList(UPPER_LIMIT + MAX_OVERWORK);
     }
-
+    
     /**
      * Evaluates all objectives registered by the objectiveEvaluator in the
      * constructor. Before evaluation, it repairs the repairedSolution according to
@@ -130,7 +132,7 @@ public class JMetalDSPSPAdapter {
         int missingSkills = missingSkills();
 
         if (missingSkills > 0) {
-
+        	missingSkillsForTask = true;
             solution.setObjective(DURATION, project.penalizeDuration(missingSkills));
             solution.setObjective(COST, project.penalizeCost(missingSkills));
             solution.setObjective(ROBUSTNESS, project.penalizeRobustness(missingSkills));
@@ -175,45 +177,23 @@ public class JMetalDSPSPAdapter {
     }
 
     private DedicationMatrix repair(DoubleSolution solution) {
-//        repairedSolution = enableOnlyAvailableEmployees(repairedSolution);
-//        repairedSolution = enableOnlyAvailableTasks(repairedSolution);
         return constraintEvaluator.repair(converter.convert(solution), project);
     }
-
-//    private DoubleSolution enableOnlyAvailableTasks(DoubleSolution repairedSolution) {
-//        for (DynamicTask task : getProject().getTasks()) {
-//            if (!task.isAvailable()) {
-//                for (DynamicEmployee employee : getProject().getEmployees()) {
-//                    repairedSolution.setVariableValue(
-//                            SolutionConverter.encode(employee.index(), task.index()),
-//                            0.0
-//                    );
-//                }
-//            }
-//        }
-//        return repairedSolution;
-//    }
-//
-//    private DoubleSolution enableOnlyAvailableEmployees(DoubleSolution repairedSolution) {
-//        for (DynamicEmployee employee : getProject().getEmployees()) {
-//            if (!employee.isAvailable()) {
-//                for (DynamicTask task : getProject().getAvailableTasks()) {
-//                    repairedSolution.setVariableValue(
-//                            SolutionConverter.encode(employee.index(), task.index()),
-//                            0.0
-//                    );
-//                }
-//            }
-//        }
-//        return repairedSolution;
-//    }
 
     public int getNumberOfConstraints() {
         return constraintEvaluator.size();
     }
-
+    
     public int missingSkills() {
         return project.missingSkills();
+    }
+
+    /**
+     * if true then the problem is unsolvable
+     * @return
+     */
+    public boolean isMissingSkillsForTask() {
+        return missingSkillsForTask;
     }
 
 }

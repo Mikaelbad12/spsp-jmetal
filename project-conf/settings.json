@@ -4,9 +4,17 @@
     "project-conf/dynamic/dynamic_example_new1.json"
   ],
   "algorithms": [
-    "GDE3",
-    "MOEADDE"
+  	"GDE3",
+    "GDE3Dynamic",
+    "MOEADDE",
+    "MOEADDEDynamic"
   ],
   "objectiveEvaluations": 12000,
-  "populationSize": 100
+  "populationSize": 100,
+  "repairedSolutions": 0.3,
+  "histPropPreviousEventSolutions": 0.2,
+  "dynamicStrategies": [
+    "history_info",
+    "proactive_repair"
+  ]
 }

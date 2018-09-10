@@ -90,4 +90,8 @@ public class DSPSProblem extends AbstractDoubleProblem {
     public String getInstanceDescription() {
         return getProject().getInstanceDescription();
     }
+    
+    public boolean isUnsolvable() {
+    	return dspsp.isMissingSkillsForTask();
+    }
 }

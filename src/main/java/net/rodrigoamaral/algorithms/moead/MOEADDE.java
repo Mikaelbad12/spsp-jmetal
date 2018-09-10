@@ -11,7 +11,7 @@ public class MOEADDE extends MOEAD {
 
 	public MOEADDE(Problem<DoubleSolution> problem, int populationSize, int resultPopulationSize, int maxEvaluations,
 			MutationOperator<DoubleSolution> mutation, CrossoverOperator<DoubleSolution> crossover,
-			org.uma.jmetal.algorithm.multiobjective.moead.AbstractMOEAD.FunctionType functionType, String dataDirectory,
+			FunctionType functionType, String dataDirectory,
 			double neighborhoodSelectionProbability, int maximumNumberOfReplacedSolutions, int neighborSize) {
 		super(problem, populationSize, resultPopulationSize, maxEvaluations, mutation, crossover, functionType, dataDirectory,
 				neighborhoodSelectionProbability, maximumNumberOfReplacedSolutions, neighborSize);

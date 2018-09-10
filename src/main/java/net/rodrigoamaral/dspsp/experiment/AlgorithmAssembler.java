@@ -21,7 +21,9 @@ import org.uma.jmetal.util.comparator.RankingAndCrowdingDistanceComparator;
 import org.uma.jmetal.util.pseudorandom.impl.MersenneTwisterGenerator;
 
 import net.rodrigoamaral.algorithms.ISwarm;
+import net.rodrigoamaral.algorithms.gde3.GDE3DynamicBuilder;
 import net.rodrigoamaral.algorithms.moead.MOEADDEBuilder;
+import net.rodrigoamaral.algorithms.moead.MOEADDEDynamicBuilder;
 import net.rodrigoamaral.algorithms.ms2mo.MS2MOBuilder;
 import net.rodrigoamaral.algorithms.nsgaii.NSGAIIDynamicBuilder;
 import net.rodrigoamaral.algorithms.smpso.SMPSOBuilder;
@@ -155,8 +157,22 @@ public class AlgorithmAssembler {
         			.setPopulationSize(populationSize)
         			.setMaxEvaluations(getMaxIterations())
         			.build();
+        } else if("GDE3DYNAMIC".equals(algorithmID.toUpperCase())){
+        	return new GDE3DynamicBuilder((DoubleProblem) problem)
+        			.setInitialPopulation(initialPopulation)
+        			.setPopulationSize(populationSize)
+        			.setMaxEvaluations(getMaxIterations())
+        			.build();
         } else if("MOEADDE".equals(algorithmID.toUpperCase())){
         	return new MOEADDEBuilder(problem)
+        			.setPopulationSize(populationSize)
+        			.setMaxEvaluations(getMaxIterations())
+        			.setNeighborhoodSelectionProbability(0.9)
+        			.setDataDirectory("MOEAD_Weights")
+        			.build();
+        } else if("MOEADDEDYNAMIC".equals(algorithmID.toUpperCase())){
+        	return new MOEADDEDynamicBuilder(problem)
+        			.setInitialPopulation(initialPopulation)
         			.setPopulationSize(populationSize)
         			.setMaxEvaluations(getMaxIterations())
         			.setNeighborhoodSelectionProbability(0.9)

@@ -580,6 +580,7 @@ public class DynamicProject {
     }
 
     public int missingSkills() {
+    	//TODO maybe should consider only active tasks instead available
         return TaskManager.totalMissingSkills(getAvailableTasks(), getAvailableEmployees());
     }
 
