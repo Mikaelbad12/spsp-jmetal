@@ -13,6 +13,7 @@ public class DynamicTask extends net.rodrigoamaral.spsp.project.Task implements 
     private int maximumHeadcount;
     private static final double FINISH_THRESHOLD = 10E-10;
     private boolean available = false;
+    private boolean removed;
 
     public DynamicTask(int id,
                        double initialEstimatedEffort,
@@ -104,6 +105,14 @@ public class DynamicTask extends net.rodrigoamaral.spsp.project.Task implements 
 
     public void setEffort(double effort) {
         this.effort = effort;
+    }
+    
+    public boolean isRemoved() {
+    	return removed;
+    }
+    
+    public void setRemoved(boolean removed) {
+    	this.removed = removed;
     }
 
     @Override

@@ -26,6 +26,8 @@ import net.rodrigoamaral.algorithms.moead.MOEADDEBuilder;
 import net.rodrigoamaral.algorithms.moead.MOEADDEDynamicBuilder;
 import net.rodrigoamaral.algorithms.ms2mo.MS2MOBuilder;
 import net.rodrigoamaral.algorithms.nsgaii.NSGAIIDynamicBuilder;
+import net.rodrigoamaral.algorithms.nsgaiii.NSGAIIIBuilder;
+import net.rodrigoamaral.algorithms.nsgaiii.NSGAIIIDynamicBuilder;
 import net.rodrigoamaral.algorithms.smpso.SMPSOBuilder;
 import net.rodrigoamaral.algorithms.smpso.SMPSODynamicBuilder;
 import net.rodrigoamaral.jmetal.util.evaluator.impl.SequentialSolutionListEvaluator;
@@ -178,8 +180,24 @@ public class AlgorithmAssembler {
         			.setNeighborhoodSelectionProbability(0.9)
         			.setDataDirectory("MOEAD_Weights")
         			.build();
-        }
-        else {
+        }else if ("NSGAIII".equals(algorithmID.toUpperCase())) {
+            return new NSGAIIIBuilder(problem)
+            		.setCrossoverOperator(crossover)
+            		.setMutationOperator(mutation)
+                    .setSelectionOperator(selection)
+                    .setMaxIterations(getMaxIterations())
+                    .setPopulationSize(populationSize)
+                    .build();
+        } else if ("NSGAIIIDYNAMIC".equals(algorithmID.toUpperCase())) {
+                return new NSGAIIIDynamicBuilder(problem)
+                		.setInitialPopulation(initialPopulation)
+                		.setCrossoverOperator(crossover)
+                		.setMutationOperator(mutation)
+                        .setSelectionOperator(selection)
+                        .setMaxIterations(getMaxIterations())
+                        .setPopulationSize(populationSize)
+                        .build();
+        } else {
             throw new IllegalArgumentException("Invalid algorithm ID: " + algorithmID);
         }
 

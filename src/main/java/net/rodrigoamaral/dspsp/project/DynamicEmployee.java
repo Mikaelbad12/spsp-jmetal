@@ -13,7 +13,7 @@ public class DynamicEmployee extends net.rodrigoamaral.spsp.project.Employee imp
     private boolean available = true;
     private HashMap<Integer, Double> proficiencyOnTask;
 
-    public DynamicEmployee(int id, float salary, float _overtimeSalary, int originalIndex) {
+    public DynamicEmployee(int id, double salary, double _overtimeSalary, int originalIndex) {
         super(id, salary);
         skillsProficiency = new HashMap<>();
         proficiencyOnTask= new HashMap<>();

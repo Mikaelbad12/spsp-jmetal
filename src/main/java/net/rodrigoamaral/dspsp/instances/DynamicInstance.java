@@ -46,8 +46,8 @@ public class DynamicInstance {
     private double temp1;
     private int index;
     private int employee_number;
-    private List<Float> employee_salary;
-    private List<Float> employee_salary_over;
+    private List<Double> employee_salary;
+    private List<Double> employee_salary_over;
     private List<List<Integer>> employee_skill_set;
     private List<List<Double>> employee_skill_proficieny_set;
     private List<Integer> employee_skill_number;
@@ -417,19 +417,19 @@ public class DynamicInstance {
         this.employee_number = employee_number;
     }
 
-    public List<Float> getEmployee_salary() {
+    public List<Double> getEmployee_salary() {
         return employee_salary;
     }
 
-    public void setEmployee_salary(List<Float> employee_salary) {
+    public void setEmployee_salary(List<Double> employee_salary) {
         this.employee_salary = employee_salary;
     }
 
-    public List<Float> getEmployee_salary_over() {
+    public List<Double> getEmployee_salary_over() {
         return employee_salary_over;
     }
 
-    public void setEmployee_salary_over(List<Float> employee_salary_over) {
+    public void setEmployee_salary_over(List<Double> employee_salary_over) {
         this.employee_salary_over = employee_salary_over;
     }
 

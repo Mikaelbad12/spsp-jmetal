@@ -8,7 +8,9 @@ public enum EventType {
 
     NEW_URGENT_TASK(1),
     EMPLOYEE_LEAVE(2),
-    EMPLOYEE_RETURN(3);
+    EMPLOYEE_RETURN(3),
+	NEW_EMPLOYEE_ARRIVE(4),
+	REMOVE_TASK(5);
 
     private int value;
     private static Map<Integer, EventType> map = new HashMap<>();

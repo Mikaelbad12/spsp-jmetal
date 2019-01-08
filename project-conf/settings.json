@@ -1,14 +1,17 @@
 {
   "numberOfRuns": 1,
   "instanceFiles": [
-    "project-conf/dynamic/dynamic_example_new1.json"
+    "project-conf/dynamic-extended/dynamic_example_new1.json"
   ],
   "algorithms": [
   	"GDE3",
     "GDE3Dynamic",
     "MOEADDE",
-    "MOEADDEDynamic"
+    "MOEADDEDynamic",
+    "NSGAIII",
+    "NSGAIIIDynamic"
   ],
+  "useExtendedIntance": true,
   "objectiveEvaluations": 12000,
   "populationSize": 100,
   "repairedSolutions": 0.3,

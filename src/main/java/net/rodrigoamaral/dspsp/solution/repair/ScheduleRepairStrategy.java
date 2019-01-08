@@ -14,7 +14,7 @@ import java.util.List;
 import static java.lang.Double.max;
 import static net.rodrigoamaral.util.DoubleUtils.sum;
 
-abstract public class ScheduleRepairStrategy implements IScheduleRepairStrategy {
+public abstract class ScheduleRepairStrategy implements IScheduleRepairStrategy {
 
     protected final DedicationMatrix schedule;
     protected final DynamicProject project;

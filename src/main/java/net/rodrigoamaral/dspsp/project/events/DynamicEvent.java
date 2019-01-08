@@ -48,6 +48,12 @@ public class DynamicEvent {
             case EMPLOYEE_RETURN:
                 text = "Employee "+ subject.index() + " RETURNED to the project";
                 break;
+            case NEW_EMPLOYEE_ARRIVE:
+                text = "New Employee "+ subject.index() + " ARRIVED to the project";
+                break;
+            case REMOVE_TASK:
+                text = "Task "+ subject.index() + " REMOVED from the project";
+                break;
         }
         return text;
     }

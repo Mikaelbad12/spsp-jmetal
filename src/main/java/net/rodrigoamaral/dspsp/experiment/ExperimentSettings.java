@@ -22,6 +22,7 @@ public class ExperimentSettings {
     private Double repairedSolutions;
     private Double histPropPreviousEventSolutions;
     private List<String> dynamicStrategies;
+    private Boolean useExtendedIntance;
 
     public Integer getNumberOfRuns() {
         return numberOfRuns;
@@ -102,6 +103,14 @@ public class ExperimentSettings {
     public void setDynamicStrategies(List<String> dynamicStrategies) {
         this.dynamicStrategies = dynamicStrategies;
     }
+    
+    public Boolean getUseExtendedIntance() {
+    	return useExtendedIntance;
+    }
+    
+    public void setUseExtendedIntance(Boolean useExtendedIntance) {
+    	this.useExtendedIntance = useExtendedIntance;
+    }
 
     @Override
     public String toString() {
@@ -116,6 +125,7 @@ public class ExperimentSettings {
         sb.append("\n\trepairedSolutions = " + repairedSolutions);
         sb.append("\n\thistPropPreviousEventSolutions = " + histPropPreviousEventSolutions);
         sb.append("\n\tdynamicStrategies = " + dynamicStrategies);
+        sb.append("\n\tuseExtendedIntance = " + useExtendedIntance);
         sb.append("\n}");
         return sb.toString();
     }

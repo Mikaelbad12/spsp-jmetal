@@ -20,8 +20,8 @@ import java.util.List;
  */
 public class DynamicProjectConfigLoader {
 
-    private DynamicInstance config;
-    private DynamicProject project;
+	protected DynamicInstance instance;
+	protected DynamicProject project;
 
     /**
      * Loads a dynamic project configuration from a json file
@@ -30,12 +30,12 @@ public class DynamicProjectConfigLoader {
      * @throws FileNotFoundException
      */
     public DynamicProjectConfigLoader(String configFile) throws FileNotFoundException {
-        config = loadFromFile(configFile);
+        instance = loadFromFile(configFile);
     }
 
-    public static DynamicInstance loadFromFile(String fileName) throws FileNotFoundException {
+    protected DynamicInstance loadFromFile(String fileName) throws FileNotFoundException {
         InstanceParser parser = new InstanceParser();
-        return parser.parse(fileName);
+        return parser.parse(fileName, DynamicInstance.class);
     }
 
     /**
@@ -56,20 +56,20 @@ public class DynamicProjectConfigLoader {
         return project;
     }
 
-    private void loadInstanceDescription() {
+    protected void loadInstanceDescription() {
         String description = String.format("sT%d_dT%d_E%d_SK%d-%d",
-                config.getTask_number(),
-                config.getNewtask_nmb(),
-                config.getEmployee_number(),
-                config.getEmployee_skill_min(),
-                config.getEmployee_skill_max()
+                instance.getTask_number(),
+                instance.getNewtask_nmb(),
+                instance.getEmployee_number(),
+                instance.getEmployee_skill_min(),
+                instance.getEmployee_skill_max()
                 );
         project.setInstanceDescription(description);
     }
 
-    private void loadAvailableDisconnectedTasks() {
+    protected void loadAvailableDisconnectedTasks() {
         for (int t: project.getTaskPrecedenceGraph().getDisconnectedTasks()) {
-            if (t < config.getTask_number()) {
+            if (t < instance.getTask_number()) {
                 DynamicTask newTask = project.getTaskByIndex(t);
                 boolean available = TaskManager.isAvailable(newTask, project.getEmployees(), project, project.getTaskPrecedenceGraph());
                 newTask.setAvailable(available);
@@ -77,9 +77,9 @@ public class DynamicProjectConfigLoader {
         }
     }
 
-    private void loadTasks() {
+    protected void loadTasks() {
 
-        for (int taskIndex = 0; taskIndex < config.getTask_total_number(); taskIndex++) {
+        for (int taskIndex = 0; taskIndex < instance.getTask_total_number(); taskIndex++) {
             DynamicTask t = loadTask(taskIndex);
             if (t != null) {
                 project.getTasks().add(t);
@@ -87,18 +87,18 @@ public class DynamicProjectConfigLoader {
             }
             loadTaskSkill(taskIndex);
         }
-        for (double time: config.getArrival_time()) {
+        for (double time: instance.getArrival_time()) {
             project.getTaskArrivalTimes().add(time);
         }
     }
 
 
-    private DynamicTask loadTask(int taskIndex) {
+    protected DynamicTask loadTask(int taskIndex) {
         int taskId = taskIndex + 1;
-        double initialEstimatedEffort = config.getTask_effort_real_secnario_total().get(taskIndex);
-        double meanEstimatedEffort = config.getTask_effort_mu_total().get(taskIndex);
-        double effortDeviation = config.getTask_effort_sigma_total().get(taskIndex);
-        int maximumHeadcount = config.getTask_headcount_total().get(taskIndex);
+        double initialEstimatedEffort = instance.getTask_effort_real_secnario_total().get(taskIndex);
+        double meanEstimatedEffort = instance.getTask_effort_mu_total().get(taskIndex);
+        double effortDeviation = instance.getTask_effort_sigma_total().get(taskIndex);
+        int maximumHeadcount = instance.getTask_headcount_total().get(taskIndex);
         return new DynamicTask(taskId,
                                initialEstimatedEffort,
                                meanEstimatedEffort,
@@ -107,16 +107,16 @@ public class DynamicProjectConfigLoader {
                                maximumHeadcount);
     }
 
-    private void loadTaskSkill(int taskIndex) {
-        List<Integer> skills = config.getTask_skill_set_total().get(taskIndex);
+    protected void loadTaskSkill(int taskIndex) {
+        List<Integer> skills = instance.getTask_skill_set_total().get(taskIndex);
         DynamicTask t = project.getTasks().get(taskIndex);
         for (Integer skill: skills) {
             t.getSkills().add(skill);
         }
     }
 
-    private void loadEmployees() {
-        for (int employeeIndex = 0; employeeIndex < config.getEmployee_number(); employeeIndex++) {
+    protected void loadEmployees() {
+        for (int employeeIndex = 0; employeeIndex < instance.getEmployee_number(); employeeIndex++) {
             DynamicEmployee emp = loadEmployee(employeeIndex);
             if (emp != null) {
                 project.getEmployees().add(emp);
@@ -126,20 +126,20 @@ public class DynamicProjectConfigLoader {
         }
     }
 
-    private DynamicEmployee loadEmployee(int employeeIndex) {
-        int employeeId = config.getAvailable_employee().get(employeeIndex);
-        float salary = config.getEmployee_salary().get(employeeIndex);
-        float overtimeSalary = config.getEmployee_salary_over().get(employeeIndex);
-        double maxDedication = config.getEmployee_maxded().get(employeeIndex);
+    protected DynamicEmployee loadEmployee(int employeeIndex) {
+        int employeeId = instance.getAvailable_employee().get(employeeIndex);
+        double salary = instance.getEmployee_salary().get(employeeIndex);
+        double overtimeSalary = instance.getEmployee_salary_over().get(employeeIndex);
+        double maxDedication = instance.getEmployee_maxded().get(employeeIndex);
 
         DynamicEmployee emp = new DynamicEmployee(employeeId, salary, overtimeSalary, employeeIndex);
         emp.setMaxDedication(maxDedication);
         return emp;
     }
 
-    private void loadEmployeeSkill(int employeeIndex) {
-        List<Integer> skills = new ArrayList<>(config.getEmployee_skill_set().get(employeeIndex));
-        List<Double> skillsProficiency = new ArrayList<>(config.getEmployee_skill_proficieny_set().get(employeeIndex));
+    protected void loadEmployeeSkill(int employeeIndex) {
+        List<Integer> skills = new ArrayList<>(instance.getEmployee_skill_set().get(employeeIndex));
+        List<Double> skillsProficiency = new ArrayList<>(instance.getEmployee_skill_proficieny_set().get(employeeIndex));
         DynamicEmployee emp = project.getEmployees().get(employeeIndex);
         emp.setSkills(skills);
         for (int sk = 0; sk < skills.size(); sk++) {
@@ -147,10 +147,10 @@ public class DynamicProjectConfigLoader {
         }
     }
 
-    private void loadTaskPrecedenceGraph(List<DynamicTask> tasks) {
-        int initialSize = config.getTask_total_number();
+    protected void loadTaskPrecedenceGraph(List<DynamicTask> tasks) {
+        int initialSize = instance.getTask_total_number();
         project.setTaskPrecedenceGraph(new DynamicTaskPrecedenceGraph(initialSize));
-        for (List<Integer> edge : config.getEdge_set()) {
+        for (List<Integer> edge : instance.getEdge_set()) {
             DynamicTask t1 = project.getTaskById(edge.get(0));
             DynamicTask t2 = project.getTaskById(edge.get(1));
             t1.setAvailable(true);
@@ -160,18 +160,18 @@ public class DynamicProjectConfigLoader {
         }
     }
 
-    private void loadEventTimeline() {
+    protected void loadEventTimeline() {
 
-        int numberOfEvents = config.getDynamic_time().size();
+        int numberOfEvents = instance.getDynamic_time().size();
         List<DynamicEvent> events = new ArrayList<>(numberOfEvents);
 
         for (int i = 0; i < numberOfEvents; i++) {
 
-            double time = config.getDynamic_time().get(i);
-            int eventCode = config.getDynamic_class().get(i);
-            int urgentTaskId = config.getDynamic_rushjob_number().get(i) + config.getTask_number();
-            int leavingEmployeeId = config.getDynamic_labour_leave_number().get(i);
-            int returningEmployeeId = config.getDynamic_labour_return_number().get(i);
+            double time = instance.getDynamic_time().get(i);
+            int eventCode = instance.getDynamic_class().get(i);
+            int urgentTaskId = instance.getDynamic_rushjob_number().get(i) + instance.getTask_number();
+            int leavingEmployeeId = instance.getDynamic_labour_leave_number().get(i);
+            int returningEmployeeId = instance.getDynamic_labour_return_number().get(i);
             EventType type = EventType.valueOf(eventCode);
             IEventSubject subject = null;
 
@@ -185,6 +185,8 @@ public class DynamicProjectConfigLoader {
                 case EMPLOYEE_RETURN:
                     subject = project.getEmployeeById(returningEmployeeId);
                     break;
+                default:
+                	continue;
             }
 
             events.add(new DynamicEvent(i, time, type, subject));
@@ -192,12 +194,12 @@ public class DynamicProjectConfigLoader {
         project.setEvents(events);
     }
 
-    private void loadTaskProficiency() {
+    protected void loadTaskProficiency() {
         for (DynamicEmployee employee: project.getEmployees()) {
             int i = employee.index();
-            project.getTaskProficiency().put(i, config.getTask_Proficieny_total().get(i));
-            for (int t = 0; t < config.getTask_Proficieny_total().get(i).size(); t++) {
-                employee.getProficiencyOnTask().put(t, config.getTask_Proficieny_total().get(i).get(t));
+            project.getTaskProficiency().put(i, instance.getTask_Proficieny_total().get(i));
+            for (int t = 0; t < instance.getTask_Proficieny_total().get(i).size(); t++) {
+                employee.getProficiencyOnTask().put(t, instance.getTask_Proficieny_total().get(i).get(t));
             }
         }
     }

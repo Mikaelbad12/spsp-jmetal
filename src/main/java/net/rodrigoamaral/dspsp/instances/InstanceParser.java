@@ -1,27 +1,27 @@
 package net.rodrigoamaral.dspsp.instances;
 
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import java.io.File;
 import java.io.IOException;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 public class InstanceParser {
 
-
-    public DynamicInstance parse(String filename) {
+    public <T> T parse(String filename, Class<T> clazz) {
         ObjectMapper mapper = new ObjectMapper();
-
-        DynamicInstance di = null;
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        
+        T obj = null;
 
         try {
-            di = mapper.readValue(new File(filename), DynamicInstance.class);
+            obj = mapper.readValue(new File(filename), clazz);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        return di;
+        return obj;
     }
-
 
 }

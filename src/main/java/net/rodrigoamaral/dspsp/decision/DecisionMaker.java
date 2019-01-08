@@ -18,10 +18,10 @@ import static net.rodrigoamaral.util.DoubleUtils.min;
 public class DecisionMaker {
 
     private List<DoubleSolution> schedules;
-    final private ComparisonMatrix cm;
+    final private AbstractComparisonMatrix cm;
     final static private double ALPHA = 0.001;
 
-    public DecisionMaker(List<DoubleSolution> schedules_, ComparisonMatrix cm) {
+    public DecisionMaker(List<DoubleSolution> schedules_, AbstractComparisonMatrix cm) {
         if (schedules_ == null || schedules_.size() < 1) {
            throw new IllegalArgumentException("Schedule list cannot be null or empty");
         }
@@ -67,8 +67,6 @@ public class DecisionMaker {
     public DoubleSolution chooseNewSchedule() {
         return choose(cm.reschedulingWeights());
     }
-
-
 
     private List<Double> getObjectiveValues(int objectiveIndex) {
         List<Double> values = new ArrayList<>();

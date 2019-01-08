@@ -11,7 +11,7 @@ import org.uma.jmetal.solution.DoubleSolution;
 
 public class EmployeeReturnStrategy extends ScheduleRepairStrategy {
 
-    private final DynamicEmployee employee;
+    protected final DynamicEmployee employee;
 
     public EmployeeReturnStrategy(DoubleSolution _solution, DynamicProject _project, DynamicEmployee employee) {
         super(_solution, _project);
@@ -27,7 +27,7 @@ public class EmployeeReturnStrategy extends ScheduleRepairStrategy {
                         int i = SolutionConverter.encode(employee.index(), task.index());
                         double newDed = 0.1;
                         if (repairedSolution.getVariableValue(i) < DedicationMatrix.MIN_DED_THRESHOLD) {
-                            SPSPLogger.debug("Repairing employee return (e = " + employee.index() + ", t = " + task.index() + ") " + repairedSolution.getVariableValue(i) + " -> " + newDed);
+                            addDebugLog(task, i, newDed);
                             repairedSolution.setVariableValue(i, newDed);
                         }
                     }
@@ -37,4 +37,8 @@ public class EmployeeReturnStrategy extends ScheduleRepairStrategy {
         normalize();
         return repairedSolution;
     }
+
+	protected void addDebugLog(DynamicTask task, int i, double newDed) {
+		SPSPLogger.debug("Repairing employee return (e = " + employee.index() + ", t = " + task.index() + ") " + repairedSolution.getVariableValue(i) + " -> " + newDed);
+	}
 }

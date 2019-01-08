@@ -1,6 +1,7 @@
 package net.rodrigoamaral.dspsp.experiment;
 
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.time.DurationFormatUtils;
@@ -9,18 +10,24 @@ import org.uma.jmetal.solution.DoubleSolution;
 import org.uma.jmetal.util.AlgorithmRunner;
 
 import net.rodrigoamaral.dspsp.DSPSProblem;
+import net.rodrigoamaral.dspsp.DSPSProblemExtended;
+import net.rodrigoamaral.dspsp.decision.AbstractComparisonMatrix;
 import net.rodrigoamaral.dspsp.decision.ComparisonMatrix;
+import net.rodrigoamaral.dspsp.decision.ComparisonMatrixExtended;
 import net.rodrigoamaral.dspsp.decision.DecisionMaker;
 import net.rodrigoamaral.dspsp.project.DynamicEmployee;
+import net.rodrigoamaral.dspsp.project.DynamicExtendedProject;
 import net.rodrigoamaral.dspsp.project.DynamicProject;
 import net.rodrigoamaral.dspsp.project.events.DynamicEvent;
 import net.rodrigoamaral.dspsp.results.SolutionFileWriter;
 import net.rodrigoamaral.dspsp.solution.DynamicPopulationCreator;
+import net.rodrigoamaral.dspsp.solution.DynamicPopulationCreatorExtended;
 import net.rodrigoamaral.dspsp.solution.SchedulingHistory;
 import net.rodrigoamaral.dspsp.solution.SchedulingResult;
 import net.rodrigoamaral.dspsp.solution.repair.EmployeeLeaveStrategy;
 import net.rodrigoamaral.dspsp.solution.repair.EmployeeReturnStrategy;
 import net.rodrigoamaral.dspsp.solution.repair.IScheduleRepairStrategy;
+import net.rodrigoamaral.dspsp.solution.repair.NewEmployeeStrategy;
 import net.rodrigoamaral.logging.SPSPLogger;
 
 /**
@@ -43,9 +50,13 @@ public class ExperimentRunner {
         this.history = new SchedulingHistory();
     }
 
+    private boolean useExtendedInstance(){
+    	return experimentSettings.getUseExtendedIntance();
+    }
+    
     private DSPSProblem loadProblemInstance(final String instanceFile) {
         try {
-            return new DSPSProblem(instanceFile);
+            return useExtendedInstance() ? new DSPSProblemExtended(instanceFile) : new DSPSProblem(instanceFile);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             System.exit(1);
@@ -54,7 +65,7 @@ public class ExperimentRunner {
     }
 
     private DSPSProblem loadProblemInstance(final DynamicProject project) {
-        return new DSPSProblem(project);
+        return useExtendedInstance() ?  new DSPSProblemExtended((DynamicExtendedProject)project) : new DSPSProblem(project);
     }
 
     public ExperimentSettings getExperimentSettings() {
@@ -93,58 +104,98 @@ public class ExperimentRunner {
                 .write();
 
         // Decides on the best initial schedule
-        ComparisonMatrix comparisonMatrix = new ComparisonMatrix();
+        AbstractComparisonMatrix comparisonMatrix = getComparisonMatrix();
         DoubleSolution initialSchedule = new DecisionMaker(population, comparisonMatrix)
                 .chooseInitialSchedule();
 
         // Loops through rescheduling points
-        DynamicProject project = problem.getProject();
-        List<DynamicEvent> reschedulingPoints = project.getEvents();
-
-        DoubleSolution currentSchedule = initialSchedule;
-
-        for (DynamicEvent event: reschedulingPoints) {
-
-            reschedulings++;
-
-            if (project.isFinished()) {
-                break;
-            }
-
-            SPSPLogger.rescheduling(reschedulings, event, run, experimentSettings.getNumberOfRuns());
-
-            SchedulingResult result = reschedule(project, event, currentSchedule, assembler);
-
-            history.put(reschedulings, result.getSchedules());
-
-
-            totalComputingTime += result.getComputingTime();
-
-            SPSPLogger.info("Rescheduling "+ reschedulings +" complete in " + DurationFormatUtils.formatDuration(result.getComputingTime(), "HH:mm:ss,SSS") + ". ");
-            SPSPLogger.info("Elapsed time: " + DurationFormatUtils.formatDuration(totalComputingTime, "HH:mm:ss,SSS"));
-            SPSPLogger.info("Project current duration: " + project.getTotalDuration());
-            SPSPLogger.info("Project current cost    : " + project.getTotalCost());
-
-
-            new SolutionFileWriter(result.getSchedules())
-                    .setAlgorithmID(algorithmID)
-                    .setInstanceID(problem.getInstanceDescription())
-                    .setRunNumber(run)
-                    .setReschedulingPoint(reschedulings)
-                    .setSeparator(" ")
-                    .write();
-
-            currentSchedule = new DecisionMaker(result.getSchedules(), comparisonMatrix).chooseNewSchedule();
-
+        if(useExtendedInstance()){
+        	DynamicExtendedProject project = (DynamicExtendedProject)problem.getProject();
+        	List<List<DynamicEvent>> reschedulingPoints = project.getParallelEvents();
+        	
+        	DoubleSolution currentSchedule = initialSchedule;
+        	
+        	for(List<DynamicEvent> eventList: reschedulingPoints){
+        		reschedulings++;
+        		
+        		if (project.isFinished()) {
+	                break;
+	            }
+        		
+        		SPSPLogger.rescheduling(reschedulings, eventList, run, experimentSettings.getNumberOfRuns());
+        		
+	            SchedulingResult result = reschedule(project, eventList, currentSchedule, assembler);
+	
+	            history.put(reschedulings, result.getSchedules());
+	            
+	            totalComputingTime += result.getComputingTime();
+	        	
+	            logInfoRescheduling(totalComputingTime, project, result);
+	
+	            new SolutionFileWriter(result.getSchedules())
+	                    .setAlgorithmID(algorithmID)
+	                    .setInstanceID(problem.getInstanceDescription())
+	                    .setRunNumber(run)
+	                    .setReschedulingPoint(reschedulings)
+	                    .setSeparator(" ")
+	                    .write();
+	
+	            currentSchedule = new DecisionMaker(result.getSchedules(), comparisonMatrix).chooseNewSchedule();
+        	}
+        }else{
+	        DynamicProject project = problem.getProject();
+	        List<DynamicEvent> reschedulingPoints = project.getEvents();
+	
+	        DoubleSolution currentSchedule = initialSchedule;
+	
+	        for (DynamicEvent event: reschedulingPoints) {
+	
+	            reschedulings++;
+	
+	            if (project.isFinished()) {
+	                break;
+	            }
+	
+	            SPSPLogger.rescheduling(reschedulings, event, run, experimentSettings.getNumberOfRuns());
+	
+	            SchedulingResult result = reschedule(project, event, currentSchedule, assembler);
+	
+	            history.put(reschedulings, result.getSchedules());
+	
+	
+	            totalComputingTime += result.getComputingTime();
+	
+	            logInfoRescheduling(totalComputingTime, project, result);
+	
+	            new SolutionFileWriter(result.getSchedules())
+	                    .setAlgorithmID(algorithmID)
+	                    .setInstanceID(problem.getInstanceDescription())
+	                    .setRunNumber(run)
+	                    .setReschedulingPoint(reschedulings)
+	                    .setSeparator(" ")
+	                    .write();
+	
+	            currentSchedule = new DecisionMaker(result.getSchedules(), comparisonMatrix).chooseNewSchedule();
+	
+	        }
         }
-
-
         SPSPLogger.info("Total execution time: " + DurationFormatUtils.formatDuration(totalComputingTime, "HH:mm:ss,SSS"));
 
         // TODO: Write final repairedSolution files
     }
 
-    private SchedulingResult reschedule(DynamicProject project, DynamicEvent event, DoubleSolution lastSchedule, AlgorithmAssembler assembler) {
+	private void logInfoRescheduling(long totalComputingTime, DynamicProject project, SchedulingResult result) {
+		SPSPLogger.info("Rescheduling "+ reschedulings +" complete in " + DurationFormatUtils.formatDuration(result.getComputingTime(), "HH:mm:ss,SSS") + ". ");
+		SPSPLogger.info("Elapsed time: " + DurationFormatUtils.formatDuration(totalComputingTime, "HH:mm:ss,SSS"));
+		SPSPLogger.info("Project current duration: " + project.getTotalDuration());
+		SPSPLogger.info("Project current cost    : " + project.getTotalCost());
+	}
+
+    private AbstractComparisonMatrix getComparisonMatrix() {
+		return useExtendedInstance() ? new ComparisonMatrixExtended() : new ComparisonMatrix();
+	}
+
+	private SchedulingResult reschedule(DynamicProject project, DynamicEvent event, DoubleSolution lastSchedule, AlgorithmAssembler assembler) {
 
         IScheduleRepairStrategy repairStrategy = null;
         switch (event.getType()) {
@@ -183,13 +234,57 @@ public class ExperimentRunner {
 
         AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm).execute();
         
-        if(problem.isUnsolvable()) {
-        	SPSPLogger.info("The event that happened made the problem unsolvable because there are tasks that can't be executed");
-        	return new SchedulingResult(history.get(reschedulings - 1),
-                    algorithmRunner.getComputingTime(),
-                    problem.getProject().isFinished());
+        return new SchedulingResult(algorithm.getResult(),
+                algorithmRunner.getComputingTime(),
+                problem.getProject().isFinished());
+    }
+	
+	private SchedulingResult reschedule(DynamicProject project, List<DynamicEvent> events, DoubleSolution lastSchedule, AlgorithmAssembler assembler) {
+		List<IScheduleRepairStrategy> repairStrategies = new ArrayList<>();
+		for(DynamicEvent event : events){
+	        switch (event.getType()) {
+	            case EMPLOYEE_LEAVE:
+	                repairStrategies.add(new EmployeeLeaveStrategy(lastSchedule, project, (DynamicEmployee) event.getSubject()));
+	                break;
+	            case EMPLOYEE_RETURN:
+	                repairStrategies.add(new EmployeeReturnStrategy(lastSchedule, project, (DynamicEmployee) event.getSubject()));
+	                break;
+	            case NEW_EMPLOYEE_ARRIVE:
+	                repairStrategies.add(new NewEmployeeStrategy(lastSchedule, project, (DynamicEmployee) event.getSubject()));
+	                break;
+//	            case REMOVE_TASK: TODO verificar
+	                //repairStrategies.add(new EmployeeReturnStrategy(lastSchedule, project, (DynamicEmployee) event.getSubject()));
+//	                break;
+	            default:
+	                break;
+	        }
+		}
+
+
+        ((DynamicExtendedProject)project).update(events, lastSchedule);
+
+        DSPSProblem problem = loadProblemInstance(project);
+
+        Algorithm<List<DoubleSolution>> algorithm;
+
+        // First rescheduling doesn't take initial population
+        if ((reschedulings > 1) && (assembler.getAlgorithmID().toUpperCase().endsWith("DYNAMIC"))) {
+
+            List<DoubleSolution> initialPopulation = new DynamicPopulationCreatorExtended(
+                    problem,
+                    history,
+                    experimentSettings,
+                    assembler.getAlgorithmID(),
+                    repairStrategies
+            ).create(reschedulings);
+
+            algorithm = assembler.assemble(problem, initialPopulation);
+        } else {
+            algorithm = assembler.assemble(problem);
         }
 
+        AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm).execute();
+        
         return new SchedulingResult(algorithm.getResult(),
                 algorithmRunner.getComputingTime(),
                 problem.getProject().isFinished());

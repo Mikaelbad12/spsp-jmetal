@@ -30,27 +30,36 @@ import net.rodrigoamaral.logging.SPSPLogger;
  */
 public class JMetalDSPSPAdapter {
 
-    public static final int DURATION = 0;
-    public static final int COST = 1;
-    public static final int ROBUSTNESS = 2;
-    public static final int STABILITY = 3;
+	private enum Objective {
+		DURATION(0), COST(1), ROBUSTNESS(2), STABILITY(3);
+		
+		private int value;
+		
+		private Objective(int value){
+			this.value = value;
+		}
+		
+		public int getValue(){
+			return value;
+		}
+	}
+	
+    private static final int[] STATIC_OBJECTIVES = {Objective.DURATION.getValue(), Objective.COST.getValue(), 
+    												Objective.ROBUSTNESS.getValue()};
+    private static final int[] DYNAMIC_OBJECTIVES = {Objective.DURATION.getValue(), Objective.COST.getValue(), 
+    												Objective.ROBUSTNESS.getValue(), Objective.STABILITY.getValue()};
 
-    public static final int[] STATIC_OBJECTIVES = {DURATION, COST, ROBUSTNESS};
-    public static final int[] DYNAMIC_OBJECTIVES = {DURATION, COST, ROBUSTNESS, STABILITY};
-
-    private static final String problemName = "DSPSP";
-    private DynamicProject project;
+    private static final String PROBLEM_NAME = "DSPSP";
     private static final double LOWER_LIMIT = 0.0;
     private static final double UPPER_LIMIT = 1.0;
     private static final double MAX_OVERWORK = 0.2;
 
+    protected DynamicProject project;
+    protected IConstraintEvaluator constraintEvaluator;
     private int[] objectives;
-    private IConstraintEvaluator constraintEvaluator;
 
     private SolutionConverter converter;
     
-    private boolean missingSkillsForTask;
-
     /**
      * Creates a {@link DynamicProject} instance and evaluate all objectives and constraints
      * needed for SPSP.
@@ -59,17 +68,21 @@ public class JMetalDSPSPAdapter {
      * @throws FileNotFoundException
      */
     public JMetalDSPSPAdapter(String configFile) throws FileNotFoundException {
-        this.project = new DynamicProjectConfigLoader(configFile).createProject();
+        createDynamicProjectFromFile(configFile);
         init();
     }
+
+	protected void createDynamicProjectFromFile(String configFile) throws FileNotFoundException {
+		this.project = new DynamicProjectConfigLoader(configFile).createProject();
+	}
 
     public JMetalDSPSPAdapter(DynamicProject project) {
         this.project = project;
         initDynamic();
     }
-
+    
     private void init() {
-        this.objectives = STATIC_OBJECTIVES;
+        this.objectives = getStaticObjectives();
         this.constraintEvaluator = new DSPSPConstraintEvaluator()
                 .addConstraint(new NoEmployeeOverworkConstraint())
                 .addConstraint(new AllTasksAllocatedConstraint())
@@ -81,7 +94,15 @@ public class JMetalDSPSPAdapter {
 
     private void initDynamic() {
         init();
-        this.objectives = DYNAMIC_OBJECTIVES;
+        this.objectives = getDynamicObjectives();
+    }
+    
+    protected int[] getStaticObjectives(){
+    	return STATIC_OBJECTIVES;
+    }
+    
+    protected int[] getDynamicObjectives(){
+    	return DYNAMIC_OBJECTIVES;
     }
 
     public DynamicProject getProject() {
@@ -89,7 +110,7 @@ public class JMetalDSPSPAdapter {
     }
 
     public String getProblemName() {
-        return problemName;
+        return PROBLEM_NAME;
     }
 
     public int getNumberOfVariables() {
@@ -132,14 +153,16 @@ public class JMetalDSPSPAdapter {
         int missingSkills = missingSkills();
 
         if (missingSkills > 0) {
-        	missingSkillsForTask = true;
-            solution.setObjective(DURATION, project.penalizeDuration(missingSkills));
-            solution.setObjective(COST, project.penalizeCost(missingSkills));
-            solution.setObjective(ROBUSTNESS, project.penalizeRobustness(missingSkills));
+            solution.setObjective(getObjectiveDurationValue(), project.penalizeDuration(missingSkills));
+            solution.setObjective(getObjectiveCostValue(), project.penalizeCost(missingSkills));
+            solution.setObjective(getObjectiveRobustnessValue(), project.penalizeRobustness(missingSkills));
 
+            penalizeExtraObjectives(solution, missingSkills);
+            
             if (mustIncludeStability(solution)) {
-                solution.setObjective(STABILITY, project.penalizeStability(missingSkills));
+                solution.setObjective(getObjectiveStabilityValue(), project.penalizeStability(missingSkills));
             }
+            
 
         } else {
 
@@ -147,32 +170,60 @@ public class JMetalDSPSPAdapter {
                 Efficiency efficiency = project.evaluateEfficiency(dm);
                 double robustness = project.calculateRobustness(dm, efficiency);
 
-                solution.setObjective(DURATION, efficiency.duration);
-                solution.setObjective(COST, efficiency.cost);
-                solution.setObjective(ROBUSTNESS, robustness);
+                solution.setObjective(getObjectiveDurationValue(), efficiency.duration);
+                solution.setObjective(getObjectiveCostValue(), efficiency.cost);
+                solution.setObjective(getObjectiveRobustnessValue(), robustness);
 
+                evaluateExtraObjectives(solution, dm, efficiency, robustness);
+                
                 if (mustIncludeStability(solution)) {
                     double stability = project.calculateStability(dm);
-                    solution.setObjective(STABILITY, stability);
+                    solution.setObjective(getObjectiveStabilityValue(), stability);
                 }
+                
             } catch (InvalidSolutionException e) {
 
                 SPSPLogger.trace("Penalizing invalid repairedSolution: " + dm);
 
-                solution.setObjective(DURATION, project.penalizeDuration(1));
-                solution.setObjective(COST, project.penalizeCost(1));
-                solution.setObjective(ROBUSTNESS, project.penalizeRobustness(1));
+                solution.setObjective(getObjectiveDurationValue(), project.penalizeDuration(1));
+                solution.setObjective(getObjectiveCostValue(), project.penalizeCost(1));
+                solution.setObjective(getObjectiveRobustnessValue(), project.penalizeRobustness(1));
 
+                penalizeExtraObjectives(solution, 1);
+                
                 if (mustIncludeStability(solution)) {
-                    solution.setObjective(STABILITY, project.penalizeStability(1));
+                    solution.setObjective(getObjectiveStabilityValue(), project.penalizeStability(1));
                 }
+                
             }
         }
 
         return solution;
     }
 
-    private boolean mustIncludeStability(DoubleSolution solution) {
+	protected int getObjectiveStabilityValue() {
+		return Objective.STABILITY.getValue();
+	}
+
+	protected int getObjectiveRobustnessValue() {
+		return Objective.ROBUSTNESS.getValue();
+	}
+
+	protected int getObjectiveCostValue() {
+		return Objective.COST.getValue();
+	}
+
+	protected int getObjectiveDurationValue() {
+		return Objective.DURATION.getValue();
+	}
+    
+    protected void evaluateExtraObjectives(DoubleSolution solution, DedicationMatrix dm, Efficiency efficiency, double robustness) throws InvalidSolutionException {
+	}
+
+	protected void penalizeExtraObjectives(DoubleSolution solution, int missingSkills) {
+	}
+
+	private boolean mustIncludeStability(DoubleSolution solution) {
         return project.getPreviousSchedule() != null && solution.getNumberOfObjectives() > 3;
     }
 
@@ -186,14 +237,6 @@ public class JMetalDSPSPAdapter {
     
     public int missingSkills() {
         return project.missingSkills();
-    }
-
-    /**
-     * if true then the problem is unsolvable
-     * @return
-     */
-    public boolean isMissingSkillsForTask() {
-        return missingSkillsForTask;
     }
 
 }

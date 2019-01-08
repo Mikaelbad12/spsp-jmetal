@@ -202,7 +202,7 @@ public class DynamicProject {
         return effortScenarioSample;
     }
 
-    private void updateEmployeeAvailability(DynamicEvent event) {
+    protected void updateEmployeeAvailability(DynamicEvent event) {
         int id = event.getSubject().getId();
         if (event.getType() == EventType.EMPLOYEE_LEAVE) {
             getEmployeeById(id).setAvailable(false);
@@ -211,12 +211,12 @@ public class DynamicProject {
         }
     }
 
-    private void updateTaskAvailability(DynamicEvent event) {
+    protected void updateTaskAvailability(DynamicEvent event) {
         List<Integer> incomingTasksIDs = getIncomingTasks(event);
         makeTasksAvailable(incomingTasksIDs, event);
     }
 
-    private void makeTasksAvailable(List<Integer> incomingTaskIDs, DynamicEvent event) {
+    protected void makeTasksAvailable(List<Integer> incomingTaskIDs, DynamicEvent event) {
         int urgentTaskIndex = -1;
         if (event.getType() == EventType.NEW_URGENT_TASK) {
             if (!incomingTaskIDs.isEmpty()) {
@@ -249,7 +249,7 @@ public class DynamicProject {
         }
     }
 
-    private List<Integer> chooseRandomTasks() {
+    protected List<Integer> chooseRandomTasks() {
         List<Integer> tasks = new ArrayList<>();
         int numTasks = Math.random() <= 0.5 ? 2 : 1;
         int s = availableTasks.size();
@@ -262,7 +262,7 @@ public class DynamicProject {
         return tasks;
     }
 
-    private List<Integer> getIncomingTasks(DynamicEvent event) {
+    protected List<Integer> getIncomingTasks(DynamicEvent event) {
         List<Integer> incomingTasks = new ArrayList<>();
         double currentTime = event.getTime();
         for (int i = 0; i < getTaskArrivalTimes().size(); i++) {
@@ -274,7 +274,7 @@ public class DynamicProject {
         return incomingTasks;
     }
 
-    private void updateFinishedEffort(List<DynamicEmployee> availableEmployees_, double currentTime) {
+    protected void updateFinishedEffort(List<DynamicEmployee> availableEmployees_, double currentTime) {
 
         Map<Integer, EffortParameters> efforts = new HashMap<>();
 
@@ -523,7 +523,7 @@ public class DynamicProject {
         return sum(doubleList) / doubleList.size();
     }
 
-    public List<DynamicTask> filterAvailableTasks() {
+    protected List<DynamicTask> filterAvailableTasks() {
         List<DynamicTask> availableTasks = new ArrayList<>();
         for (DynamicTask task : getTasks()) {
             if (task.isAvailable()) {
@@ -533,7 +533,7 @@ public class DynamicProject {
         return availableTasks;
     }
 
-    private List<DynamicEmployee> filterAvailableEmployees() {
+    protected List<DynamicEmployee> filterAvailableEmployees() {
         List<DynamicEmployee> availableEmployees = new ArrayList<>();
         for (DynamicEmployee employee : getEmployees()) {
             if (employee.isAvailable()) {
@@ -543,7 +543,7 @@ public class DynamicProject {
         return availableEmployees;
     }
 
-    private List<DynamicTask> filterActiveTasks() {
+    protected List<DynamicTask> filterActiveTasks() {
         List<DynamicTask> activeTasks = new ArrayList<>();
         for (int t : taskPrecedenceGraph.getIndependentTasks()) {
             DynamicTask task = getTaskByIndex(t);
@@ -831,7 +831,7 @@ public class DynamicProject {
         return this.lastAvailableEmployees;
     }
 
-    private void setLastAvailableEmployees(List<DynamicEmployee> lastAvailableEmployees_) {
+    protected void setLastAvailableEmployees(List<DynamicEmployee> lastAvailableEmployees_) {
         List<Integer> employees = new ArrayList<>();
         for (DynamicEmployee emp: lastAvailableEmployees_) {
             employees.add(emp.index());

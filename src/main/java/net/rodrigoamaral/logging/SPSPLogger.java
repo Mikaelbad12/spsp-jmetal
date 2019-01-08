@@ -1,12 +1,17 @@
 package net.rodrigoamaral.logging;
 
 
-import net.rodrigoamaral.dspsp.project.events.DynamicEvent;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
-import java.util.logging.*;
+import java.util.List;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
+
+import net.rodrigoamaral.dspsp.project.events.DynamicEvent;
 
 public class SPSPLogger {
 
@@ -103,6 +108,18 @@ public class SPSPLogger {
     public static void rescheduling(int schedulings, DynamicEvent event, int runNumber, int totalRuns) {
         
         String msg = String.format("RESCHEDULING %d: %s at %.4f (run %d of %d) ", schedulings, event.description(), event.getTime(), runNumber, totalRuns);
+        
+        logger.info(highlight(msg));
+    }
+    
+    public static void rescheduling(int schedulings, List<DynamicEvent> events, int runNumber, int totalRuns) {
+        StringBuilder sb = new StringBuilder();
+        for(DynamicEvent event: events){
+        	sb.append(event.description());
+        	sb.append("\n");
+        }
+        String msg = String.format("RESCHEDULING %d: %d parallel events: \n %s at %.4f (run %d of %d) ", schedulings, events.size(), sb.toString(), 
+        							events.iterator().next().getTime(), runNumber, totalRuns);
         
         logger.info(highlight(msg));
     }

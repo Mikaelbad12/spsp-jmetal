@@ -20,17 +20,25 @@ import java.io.FileNotFoundException;
 @SuppressWarnings("serial")
 public class DSPSProblem extends AbstractDoubleProblem {
 
-    private JMetalDSPSPAdapter dspsp;
+    protected JMetalDSPSPAdapter dspsp;
 
     public DSPSProblem(String projectPropertiesFileName) throws FileNotFoundException {
-        dspsp = new JMetalDSPSPAdapter(projectPropertiesFileName);
+        initDSPSPAdapterFromFile(projectPropertiesFileName);
         init();
     }
 
+	protected void initDSPSPAdapterFromFile(String projectPropertiesFileName) throws FileNotFoundException {
+		dspsp = new JMetalDSPSPAdapter(projectPropertiesFileName);
+	}
+
     public DSPSProblem(DynamicProject project) {
-        dspsp = new JMetalDSPSPAdapter(project);
+        initDSPSPAdapterFromProject(project);
         init();
     }
+
+	protected void initDSPSPAdapterFromProject(DynamicProject project) {
+		dspsp = new JMetalDSPSPAdapter(project);
+	}
 
     private void init() {
         setName(dspsp.getProblemName());
@@ -91,7 +99,4 @@ public class DSPSProblem extends AbstractDoubleProblem {
         return getProject().getInstanceDescription();
     }
     
-    public boolean isUnsolvable() {
-    	return dspsp.isMissingSkillsForTask();
-    }
 }
