@@ -58,7 +58,7 @@ public class DSPSProblem extends AbstractDoubleProblem {
     public DoubleSolution createSolution() {
         DoubleSolution newSolution = super.createSolution();
         newSolution = enableOnlyAvailableEmployees(newSolution);
-        newSolution  = enableOnlyAvailableTasks(newSolution);
+        newSolution = enableOnlyAvailableTasks(newSolution);
         return newSolution;
     }
 

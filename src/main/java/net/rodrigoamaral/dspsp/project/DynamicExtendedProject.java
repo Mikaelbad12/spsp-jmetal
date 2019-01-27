@@ -159,7 +159,7 @@ public class DynamicExtendedProject extends DynamicProject {
     		}
     	}
     	
-    	return skillValue;
+    	return skillValue * -1; //TODO validar
     }
 
 	private List<DynamicEmployee> getEmployeeProciencyOnTasks() {
@@ -186,9 +186,11 @@ public class DynamicExtendedProject extends DynamicProject {
 	}
     
     public double penalizeSkill(int missingSkills) {
-    	//TODO falar com Rodrigo para explicação das penalizações
-    	//verificar se a penalização precisa ser ajustada no modelo
-    	return 0;
+    	double penalizeValue = 0;
+    	for(DynamicTask dt: getAvailableTasks()){
+    		penalizeValue += dt.getMaximumHeadcount() * -5;
+    	}
+    	return (penalizeValue * missingSkills) * -1; //TODO validar
     }
 
     public boolean isFinished() {
