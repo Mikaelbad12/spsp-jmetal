@@ -1,9 +1,7 @@
 package net.rodrigoamaral.algorithms.cmode;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,272 +13,287 @@ import org.uma.jmetal.problem.DoubleProblem;
 import org.uma.jmetal.solution.DoubleSolution;
 import org.uma.jmetal.solution.impl.DefaultDoubleSolution;
 import org.uma.jmetal.util.SolutionListUtils;
-import org.uma.jmetal.util.archive.Archive;
-import org.uma.jmetal.util.archive.impl.NonDominatedSolutionListArchive;
-import org.uma.jmetal.util.comparator.DominanceComparator;
-import org.uma.jmetal.util.evaluator.SolutionListEvaluator;
+import org.uma.jmetal.util.archive.impl.AbstractBoundedArchive;
 import org.uma.jmetal.util.pseudorandom.JMetalRandom;
-import org.uma.jmetal.util.solutionattribute.impl.StrengthRawFitness;
 
 @SuppressWarnings({ "serial", "rawtypes" })
 public class CMODE implements Algorithm {
 	
-	private static final String DENSITY_X = "densityX";
-	private int maxEvaluations;
-	private int subpopulationSize;
-	private int archiveSize;
-//	private SolutionListEvaluator<DoubleSolution> evaluator;
-	private Comparator<DoubleSolution> comparator;
-	private DoubleProblem problem;
-	private Archive<DoubleSolution> archive;
-	private int evaluations;
-	private Random random;
-	private JMetalRandom jMetalRandom;
-	private Comparator<DoubleSolution> densityComparator;
-	private final double c = 0.1;
+	protected int maxEvaluations;
+	protected int subpopulationSize;
+	protected DoubleProblem problem;
+	private AbstractBoundedArchive<DoubleSolution> archive;
+	protected int evaluations;
+	protected Random random;
+	protected JMetalRandom jMetalRandom;
+	protected final double c = 0.1;
+	protected double[] miCR;
+	protected double[] miF;
+	protected Map<Integer, List<DoubleSolution>> population;
+	protected Map<Integer, DoubleSolution> localBest;
 	
-	private final StrengthRawFitness<DoubleSolution> strenghtRawFitness = new StrengthRawFitness<>();
-	
-	public CMODE(int maxEvaluations, int subpopulationSize, int archiveSize, 
-//					SolutionListEvaluator<DoubleSolution> evaluator,
-					DoubleProblem problem){
+	public CMODE(int maxEvaluations, int subpopulationSize, 
+				 AbstractBoundedArchive<DoubleSolution> archive, DoubleProblem problem){
 		this.maxEvaluations = maxEvaluations;
 		this.subpopulationSize = subpopulationSize;
-		this.archiveSize = archiveSize;
-//		this.evaluator = evaluator;
+		this.archive = archive;
 		this.problem = problem;
 		
-		comparator = new DominanceComparator<DoubleSolution>();
-		archive = new NonDominatedSolutionListArchive<>();
+		//crossover
+		miCR = new double[problem.getNumberOfObjectives()];
+		//mutation
+		miF = new double[problem.getNumberOfObjectives()];
+		
+		population = new HashMap<>();
+		localBest = new HashMap<>();
+		
 		random = new Random();
 		jMetalRandom = JMetalRandom.getInstance();
-		
-		densityComparator = new Comparator<DoubleSolution>(){
-
-			@Override
-			public int compare(DoubleSolution o1, DoubleSolution o2) {
-				Double value1 = (Double) o1.getAttribute(DENSITY_X);
-				Double value2 = (Double) o2.getAttribute(DENSITY_X);//strenghtRawFitness.getAttributeIdentifier()
-				return value1.compareTo(value2);
-			}
-			
-		};
 	}
 	
 	@Override
 	public void run() {
-		//crossover
-		double[] miCR = new double[problem.getNumberOfObjectives()];
-		//mutation
-		double[] miF = new double[problem.getNumberOfObjectives()];
 		
-		Map<Integer, List<DoubleSolution>> population = new HashMap<>();
-		Map<Integer, DoubleSolution> localBest = new HashMap<>();
-		for(int m = 0; m < problem.getNumberOfObjectives(); m++){
-			//TODO verificar como considerar apenas 1 objetivo para cada subpopulação
-			miCR[m] = 0.5;
-			miF[m] = 0.5;
-//			List<DoubleSolution> pop = new ArrayList<>(subpopulationSize);
-			population.put(m, new ArrayList<>(subpopulationSize));
-			for(int i = 0; i < subpopulationSize; i++){
-				DoubleSolution newIndividual = problem.createSolution();
-				problem.evaluate(newIndividual);
-				evaluations++;
-//				pop.add(newIndividual);
-				population.get(m).add(newIndividual);
-			}
-//			population.put(m, pop);//evaluator.evaluate(pop, problem));
-//			evaluations += subpopulationSize;
-			DoubleSolution best = population.get(m).get(0);
-			for(int i = 1; i < subpopulationSize; i++){
-				if(comparator.compare(best, population.get(m).get(i)) > 0){
-					best = population.get(m).get(i);
-				}
-			}
-			localBest.put(m, best);
-		}
+//		for(int m = 0; m < problem.getNumberOfObjectives(); m++){
+//			miCR[m] = 0.5;
+//			miF[m] = 0.5;
+//			
+//			population.put(m, new ArrayList<>(subpopulationSize));
+//			for(int i = 0; i < subpopulationSize; i++){
+//				DoubleSolution newIndividual = problem.createSolution();
+//				evaluate(newIndividual);
+//				population.get(m).add(newIndividual);
+//			}
+//			
+//			DoubleSolution best = population.get(m).get(0);
+//			for(int i = 1; i < subpopulationSize; i++){
+//				if(best.getObjective(m) > population.get(m).get(i).getObjective(m)){
+//					best = population.get(m).get(i);
+//				}
+//			}
+//			localBest.put(m, best);
+//		}
 		
-		for(List<DoubleSolution> list: population.values()){
-			for(DoubleSolution s: list){
-				archive.add(new ExtendedDefaultDoubleSolution((DefaultDoubleSolution)s, 0.5, 0.9));
-			}
-		}
+		createInitialPopulationAndSetBest();
+		
+//		for(List<DoubleSolution> subpop: population.values()){
+//			List<DoubleSolution> nonDominateSolutions = SolutionListUtils.getNondominatedSolutions(subpop);
+//			for(DoubleSolution s: nonDominateSolutions){
+//				archive.add(new ExtendedDefaultDoubleSolution((DefaultDoubleSolution)s, 0.5, 0.9));
+//			}
+//		}
+		
+		updateInitialArchive();
 
 		while(!isStoppingConditionReached()){
-			for(int m = 0; m < problem.getNumberOfObjectives(); m++){
-				List<Double> successfulMutationFactor = new ArrayList<>();
-				List<Double> successfulCrossoverFactor = new ArrayList<>();
-				
-				List<DoubleSolution> trialList = new ArrayList<>(subpopulationSize);
-				List<DoubleSolution> populationM = population.get(m);
-				for(DoubleSolution individual: populationM){
-					double individualMutationFactorM = generateMutationFactor(miF[m]);
-					double individualCrossoverFactorM = generateCrossoverFactor(miCR[m]);
-					
-					DoubleSolution individualArchive = archive.get(random.nextInt(archive.size()));
-					
-					DoubleSolution mutantVector = generateMutantVector(individual, individualMutationFactorM, 
-																  localBest.get(m), individualArchive,
-																  populationM.get(0), populationM.get(1));
-					DoubleSolution trialVector = generateTrialVector(individual, mutantVector, individualCrossoverFactorM);
-					problem.evaluate(trialVector);
-					evaluations++;
-					trialList.add(new ExtendedDefaultDoubleSolution((DefaultDoubleSolution)trialVector, 
-													individualMutationFactorM, individualCrossoverFactorM));
-				}
-//				trialList = evaluator.evaluate(trialList, problem);
-//				evaluations += trialList.size();
-				
-				for(int i = 0; i < subpopulationSize; i++){
-					if(comparator.compare(trialList.get(i), populationM.get(i)) < 0){
-						population.get(m).remove(i);
-						population.get(m).add(i, trialList.get(i));
-						ExtendedDefaultDoubleSolution solution = (ExtendedDefaultDoubleSolution)trialList.get(i);
-						successfulCrossoverFactor.add(solution.getCrossoverFactor());
-						successfulMutationFactor.add(solution.getMutationFactor());
-					}
-				}
-				
-				miF[m] = updateLocationParameter(miF[m], lehmerMean(successfulMutationFactor));
-				miCR[m] = updateMean(miCR[m], arithmeticMean(successfulCrossoverFactor));
-				
-				DoubleSolution best = population.get(m).get(0);
-				for(int i = 1; i < subpopulationSize; i++){
-					if(comparator.compare(best, population.get(m).get(i)) > 0){
-						best = population.get(m).get(i);
-					}
-				}
-				localBest.put(m, best);
-			}
+//			for(int m = 0; m < problem.getNumberOfObjectives(); m++){
+//				List<Double> successfulMutationFactor = new ArrayList<>();
+//				List<Double> successfulCrossoverFactor = new ArrayList<>();
+//				
+//				List<DoubleSolution> trialList = new ArrayList<>(subpopulationSize);
+//				List<DoubleSolution> subpopulation = population.get(m);
+//				for(int i=0; i < subpopulation.size(); i++){
+//					DoubleSolution individual = subpopulation.get(i);
+//					double individualMutationFactorM = generateMutationFactor(miF[m]);
+//					double individualCrossoverFactorM = generateCrossoverFactor(miCR[m]);
+//					
+//					DoubleSolution individualArchive = archive.get(random.nextInt(archive.size()));
+//					
+////					int x1, x2;
+////					do{
+////						x1 = random.nextInt(subpopulation.size());
+////						x2 = random.nextInt(subpopulation.size());
+////					}while(x1 == x2 || i == x1 || i == x2);
+//					int x1, x2;
+//					do{
+//						x1 = random.nextInt(subpopulation.size());
+//					}while(i == x1);
+//					do{
+//						x2 = random.nextInt(subpopulation.size());
+//					}while(x1 == x2 || i == x2);
+//					DoubleSolution mutantVector = generateMutantVector(individual, individualMutationFactorM, 
+//																  localBest.get(m), individualArchive,
+//																  subpopulation.get(x1), 
+//																  subpopulation.get(x2));
+//					DoubleSolution trialVector = generateTrialVector(individual, mutantVector, individualCrossoverFactorM);
+//					evaluate(trialVector);
+//					trialList.add(new ExtendedDefaultDoubleSolution((DefaultDoubleSolution)trialVector, 
+//													individualMutationFactorM, individualCrossoverFactorM));
+//				}
+//				
+//				for(int i = 0; i < subpopulationSize; i++){
+//					if(trialList.get(i).getObjective(m) < subpopulation.get(i).getObjective(m)){
+//						population.get(m).remove(i);
+//						population.get(m).add(i, trialList.get(i));
+//						ExtendedDefaultDoubleSolution solution = (ExtendedDefaultDoubleSolution)trialList.get(i);
+//						successfulCrossoverFactor.add(solution.getCrossoverFactor());
+//						successfulMutationFactor.add(solution.getMutationFactor());
+//					}
+//				}
+//				
+//				miF[m] = updateLocationParameter(miF[m], lehmerMean(successfulMutationFactor));
+//				miCR[m] = updateMean(miCR[m], arithmeticMean(successfulCrossoverFactor));
+//				
+//				DoubleSolution best = population.get(m).get(0);
+//				for(int i = 1; i < subpopulationSize; i++){
+//					if(best.getObjective(m) > population.get(m).get(i).getObjective(m)){
+//						best = population.get(m).get(i);
+//					}
+//				}
+//				localBest.put(m, best);
+//			}
+			
+			executeDEforSubpopulations();
+			
 			List<DoubleSolution> offspringArchive = executeDEforArchive();
 			
 			List<DoubleSolution> allSolutions = new ArrayList<>();
 			for(List<DoubleSolution> p: population.values()){
 				allSolutions.addAll(p);
 			}
-			allSolutions.addAll(archive.getSolutionList());
+			allSolutions.addAll(getArchive().getSolutionList());
 			allSolutions.addAll(offspringArchive);
 			
-			archive = updateArchive(SolutionListUtils.getNondominatedSolutions(allSolutions));
+			updateArchive(SolutionListUtils.getNondominatedSolutions(allSolutions));
 			
-			if(archive.size() > archiveSize){
-//				List<DoubleSolution> aux = new ArrayList<>(archive.getSolutionList());//TODO verificar se eh necessario
-				archiveTruncationStrategy(false);
-			}
-			//TODO G??
+			//Since the archive used is a bounded archive, then there no need for archive truncation code
+			//Also no need to add generation (G) variable
 		}
 	}
 	
-	protected void archiveTruncationStrategy(boolean sde){
-		if(!sde){
-			double [][] distance = SolutionListUtils.distanceMatrix(archive.getSolutionList());
+	protected void executeDEforSubpopulations(){
+		for(int m = 0; m < problem.getNumberOfObjectives(); m++){
+			List<Double> successfulMutationFactor = new ArrayList<>();
+			List<Double> successfulCrossoverFactor = new ArrayList<>();
+			
+			List<DoubleSolution> trialList = new ArrayList<>(subpopulationSize);
+			List<DoubleSolution> subpopulation = population.get(m);
+			for(int i=0; i < subpopulation.size(); i++){
+				DoubleSolution individual = subpopulation.get(i);
+				double individualMutationFactorM = generateMutationFactor(miF[m]);
+				double individualCrossoverFactorM = generateCrossoverFactor(miCR[m]);
+				
+				DoubleSolution individualArchive = getArchive().get(random.nextInt(getArchive().size()));
+				
+//				int x1, x2;
+//				do{
+//					x1 = random.nextInt(subpopulation.size());
+//					x2 = random.nextInt(subpopulation.size());
+//				}while(x1 == x2 || i == x1 || i == x2);
+				int x1, x2;
+				do{
+					x1 = random.nextInt(subpopulation.size());
+				}while(i == x1);
+				do{
+					x2 = random.nextInt(subpopulation.size());
+				}while(x1 == x2 || i == x2);
+				DoubleSolution mutantVector = generateMutantVector(individual, individualMutationFactorM, 
+															  localBest.get(m), individualArchive,
+															  subpopulation.get(x1), 
+															  subpopulation.get(x2));
+				DoubleSolution trialVector = generateTrialVector(individual, mutantVector, individualCrossoverFactorM);
+				evaluate(trialVector);
+				trialList.add(new ExtendedDefaultDoubleSolution((DefaultDoubleSolution)trialVector, 
+												individualMutationFactorM, individualCrossoverFactorM));
+			}
+			
+			for(int i = 0; i < subpopulationSize; i++){
+				if(trialList.get(i).getObjective(m) < subpopulation.get(i).getObjective(m)){
+					population.get(m).remove(i);
+					population.get(m).add(i, trialList.get(i));
+					ExtendedDefaultDoubleSolution solution = (ExtendedDefaultDoubleSolution)trialList.get(i);
+					successfulCrossoverFactor.add(solution.getCrossoverFactor());
+					successfulMutationFactor.add(solution.getMutationFactor());
+				}
+			}
+			
+			miF[m] = updateLocationParameter(miF[m], lehmerMean(successfulMutationFactor));
+			miCR[m] = updateMean(miCR[m], arithmeticMean(successfulCrossoverFactor));
+			
+			updateBest(m);
+		}
+	}
+	
+	protected void updateInitialArchive(){
+		for(List<DoubleSolution> subpop: population.values()){
+			List<DoubleSolution> nonDominateSolutions = SolutionListUtils.getNondominatedSolutions(subpop);
+			for(DoubleSolution s: nonDominateSolutions){
+				getArchive().add(new ExtendedDefaultDoubleSolution((DefaultDoubleSolution)s, 0.5, 0.9));
+			}
+		}
+	}
+	
+	protected void createInitialPopulationAndSetBest(){
+		for(int m = 0; m < problem.getNumberOfObjectives(); m++){
+			miCR[m] = 0.5;
+			miF[m] = 0.5;
+			
+			createInitialSubpopulation(m);
+			
+			updateBest(m);
+		}
+	}
+	
+	protected void updateBest(int m){
+		DoubleSolution best = population.get(m).get(0);
+		for(int i = 1; i < subpopulationSize; i++){
+			if(best.getObjective(m) > population.get(m).get(i).getObjective(m)){
+				best = population.get(m).get(i);
+			}
+		}
+		localBest.put(m, best);
+	}
+	
+	protected void createInitialSubpopulation(int m){
+		population.put(m, new ArrayList<>(subpopulationSize));
+		for(int i = 0; i < subpopulationSize; i++){
+			DoubleSolution newIndividual = problem.createSolution();
+			evaluate(newIndividual);
+			population.get(m).add(newIndividual);
+		}
+	}
 
-			// Add the distance to the k-th individual. In the reference paper of SPEA2 and CMODE,
-		    // k = sqrt(population.size()), but a value of k = 1 is recommended. See
-		    // http://www.tik.ee.ethz.ch/pisa/selectors/spea2/spea2_documentation.txt
-		    int k = (int)FastMath.sqrt(archive.size()); //TODO testar com 1
-		    List<Double> kDistances = new ArrayList<>();
-		    for (int i = 0; i < distance.length; i++) {
-		    	Arrays.sort(distance[i]);
-		    	//TODO normalizar o kdistance?
-		    	double kDistance = 1.0 / (distance[i][k] + 2.0);
-		    	kDistances.add(kDistance);
-		    	archive.getSolutionList().get(i).setAttribute(DENSITY_X, kDistance);
-		    }
-		    Collections.sort(kDistances); 
-		    Collections.sort(archive.getSolutionList(), densityComparator);
-		    archive = updateArchive(archive.getSolutionList().subList(0, archiveSize));
-		    
-//			strenghtRawFitness.computeDensityEstimator(archive.getSolutionList());
-		}else{
-			double [][] distance = shiftedDistanceMatrix(archive.getSolutionList());
-			//TODO e agora faz o que?
-		}
+	protected void evaluate(DoubleSolution newIndividual) {
+		problem.evaluate(newIndividual);
+		evaluations++;
 	}
 	
-	/**
-	 * Returns a matrix with the euclidean distance between each pair of solutions in the population
-	 * where the second solution is shifted. the value of shifted solution is firstSolution if 
-	 * secondSolution < firstSolution otherwise is secondSolution
-	 * Distances are measured in the objective space
-	 * @param solutionSet
-	 * @return
-	 */
-	private double [][] shiftedDistanceMatrix(List<DoubleSolution> solutionSet) {
-		double [][] distance = new double [solutionSet.size()][solutionSet.size()];
-		for (int i = 0; i < solutionSet.size(); i++){
-			distance[i][i] = 0.0;
-			for (int j = i + 1; j < solutionSet.size(); j++){
-				DoubleSolution shiftedSolution = getShiftSolution(solutionSet.get(i),solutionSet.get(j));
-				distance[i][j] = distanceBetweenObjectives(solutionSet.get(i), shiftedSolution);                
-				distance[j][i] = distance[i][j];            
-			}
-		}
-		return distance;
-	}
-	
-	private DoubleSolution getShiftSolution(DoubleSolution firstSolution, DoubleSolution secondSolution){
-		DoubleSolution shiftedSolution = (DoubleSolution)secondSolution.copy();
-		for(int obj = 0; obj < firstSolution.getNumberOfObjectives(); obj++){
-			if(secondSolution.getObjective(obj) < firstSolution.getObjective(obj)){
-				shiftedSolution.setObjective(obj, firstSolution.getObjective(obj));
-			}else{
-				shiftedSolution.setObjective(obj, secondSolution.getObjective(obj));
-			}
-		}
-		return shiftedSolution;
-	}
-
-	/**
-	 * Returns the euclidean distance between a pair of solutions in the objective space
-	 * @param firstSolution
-	 * @param secondSolution
-	 * @return
-	 */
-	private double distanceBetweenObjectives(DoubleSolution firstSolution, DoubleSolution secondSolution) {
-		double diff;  
-		double distance = 0.0;
-		//euclidean distance
-		for (int nObj = 0; nObj < firstSolution.getNumberOfObjectives();nObj++){
-			diff = firstSolution.getObjective(nObj) - secondSolution.getObjective(nObj);
-			distance += Math.pow(diff,2.0);           
-		}
-		return Math.sqrt(distance);
-	}
-	
-	private Archive<DoubleSolution> updateArchive(List<DoubleSolution> nonDominatedSolutions) {
-		Archive<DoubleSolution> newArchive = new NonDominatedSolutionListArchive<>();
+	protected void updateArchive(List<DoubleSolution> nonDominatedSolutions){
 		for(DoubleSolution s: nonDominatedSolutions){
-			newArchive.add(s);
+			getArchive().add(s);
 		}
-		return newArchive;
 	}
 
-	private List<DoubleSolution> executeDEforArchive() {
-		List<DoubleSolution> offspring = new ArrayList<>();
-		if(archive.size() < 4){
-			return Collections.emptyList(); //TODO validar
+	protected List<DoubleSolution> executeDEforArchive() {
+		if(getArchive().size() < 4){
+			return Collections.emptyList();
 		}
 		
-//		List<DoubleSolution> aux = new ArrayList<>();
-		for(DoubleSolution s: archive.getSolutionList()){
+		List<DoubleSolution> offspring = new ArrayList<>();
+		for(int i=0; i < getArchive().size(); i++){
+			DoubleSolution s = getArchive().get(i);
 			double mutationFactor = generateMutationFactorArchive(((ExtendedDefaultDoubleSolution)s).getMutationFactor());
 			double crossoverFactor = generateCrossoverFactorArchive(((ExtendedDefaultDoubleSolution)s).getCrossoverFactor());
 			
-			DoubleSolution mutantVector = generateMutantVectorArchive(s, archive.get(2), archive.get(3), mutationFactor);
+			int x2, x3;
+			do{
+				x2 = random.nextInt(getArchive().size());
+			}while(i == x2);
+			do{
+				x3 = random.nextInt(getArchive().size());
+			}while(x2 == x3 || i == x3);
+			DoubleSolution mutantVector = generateMutantVectorArchive(s, getArchive().get(x2), getArchive().get(x3), mutationFactor);
 			DoubleSolution trialVector = generateTrialVector(s, mutantVector, crossoverFactor);
-//			aux.add(trialVector);
-			problem.evaluate(trialVector);
-			evaluations++;
-			offspring.add(trialVector);
+
+			evaluate(trialVector);
+			
+			offspring.add(new ExtendedDefaultDoubleSolution((DefaultDoubleSolution)trialVector, 
+															mutationFactor, crossoverFactor));
 		}
-		
-//		offspring.addAll(evaluator.evaluate(aux, problem));
-//		evaluations += offspring.size();
 		return offspring;
 	}
 
-	private DoubleSolution generateMutantVectorArchive(DoubleSolution solution, DoubleSolution individual2,
+	protected DoubleSolution generateMutantVectorArchive(DoubleSolution solution, DoubleSolution individual2,
 														DoubleSolution individual3, double mutationFactor) {
 		DoubleSolution mutant = (DoubleSolution)solution.copy();
 		for (int i = 0; i < solution.getNumberOfVariables(); i++) {
@@ -288,31 +301,30 @@ public class CMODE implements Algorithm {
 			double value2 = individual2.getVariableValue(i);
 			double value3 = individual3.getVariableValue(i);
 			
-			//TODO verificar se precisar verificar o lowerBound and upperBound
 			mutant.setVariableValue(i, value + mutationFactor * (value2 - value3));
 		}
 		return mutant;
 	}
 
-	private double generateCrossoverFactorArchive(double crossoverFactor) {
+	protected double generateCrossoverFactorArchive(double crossoverFactor) {
 		if(random.nextDouble() < 0.1){
-			return random.nextDouble(); //TODO retornar o que foi gerado ou um novo
+			return random.nextDouble();
 		}
 		return crossoverFactor;
 	}
 
-	private double generateMutationFactorArchive(double mutationFactor) {
+	protected double generateMutationFactorArchive(double mutationFactor) {
 		if(random.nextDouble() < 0.1){
 			return jMetalRandom.nextDouble(0.1, 1);
 		}
 		return mutationFactor;
 	}
 
-	private double updateMean(double miCR, double arithmeticMean) {
+	protected double updateMean(double miCR, double arithmeticMean) {
 		return (1 - c) * miCR + c * arithmeticMean;
 	}
 
-	private double arithmeticMean(List<Double> successfulCrossoverFactor) {
+	protected double arithmeticMean(List<Double> successfulCrossoverFactor) {
 		double sum = 0;
 		for(Double d: successfulCrossoverFactor){
 			sum += d;
@@ -320,11 +332,11 @@ public class CMODE implements Algorithm {
 		return sum/successfulCrossoverFactor.size();
 	}
 
-	private double updateLocationParameter(double miF, double lehmerMean) {
+	protected double updateLocationParameter(double miF, double lehmerMean) {
 		return (1 - c) * miF + c * lehmerMean;
 	}
 
-	private double lehmerMean(List<Double> successfulMutationFactor) {
+	protected double lehmerMean(List<Double> successfulMutationFactor) {
 		double powsum = 0;
 		double sum = 0;
 		for(Double d: successfulMutationFactor){
@@ -335,7 +347,7 @@ public class CMODE implements Algorithm {
 	}
 
 	//Crossover
-	private DoubleSolution generateTrialVector(DoubleSolution solution, DoubleSolution mutantVector, double cr) {
+	protected DoubleSolution generateTrialVector(DoubleSolution solution, DoubleSolution mutantVector, double cr) {
 		DoubleSolution trial = (DoubleSolution)solution.copy();
 		int jrand = random.nextInt(solution.getNumberOfVariables());
 		for (int j = 0; j < solution.getNumberOfVariables(); j++) {
@@ -351,7 +363,7 @@ public class CMODE implements Algorithm {
 	//https://stackoverflow.com/questions/43454078/how-to-draw-random-number-from-a-cauchy-distribution-in-matlab
 	//org.apache.commons.math3.distribution.CauchyDistribution#sample -> inverseCumulativeProbability
 	//	new CauchyDistribution(miF[m], scale).sample();
-	private double generateMutationFactor(double locationParameter){
+	protected double generateMutationFactor(double locationParameter){
 		double scale = 0.1;
 		double factor;
 		do{
@@ -367,13 +379,12 @@ public class CMODE implements Algorithm {
 	//https://www.javamex.com/tutorials/random_numbers/gaussian_distribution_2.shtml
 	//org.apache.commons.math3.distribution.NormalDistribution#sample
 	//	new NormalDistribution(miCR[m], standardDeviation).sample();
-	private double generateCrossoverFactor(double mean){
+	protected double generateCrossoverFactor(double mean){
 		double standardDeviation = 0.1;
 		return random.nextGaussian() * standardDeviation + mean;
 	}
 	
-	//TODO verificar se modificar o mesmo ou um novo eh criado
-	private DoubleSolution generateMutantVector(DoubleSolution solution, double individualMutationFactorM,
+	protected DoubleSolution generateMutantVector(DoubleSolution solution, double individualMutationFactorM,
 			DoubleSolution best, DoubleSolution individualArchive, DoubleSolution individual1,
 			DoubleSolution individual2) {
 		DoubleSolution mutant = (DoubleSolution)solution.copy();
@@ -384,7 +395,6 @@ public class CMODE implements Algorithm {
 			double value2 = individual2.getVariableValue(i);
 			double archiveValue = individualArchive.getVariableValue(i);
 			
-			//TODO verificar se precisar verificar o lowerBound and upperBound
 			mutant.setVariableValue(i, value + individualMutationFactorM * (bestValue - value)
 											+ individualMutationFactorM * (value1 - value2)
 											+ individualMutationFactorM * (archiveValue - value));
@@ -394,6 +404,14 @@ public class CMODE implements Algorithm {
 
 	protected boolean isStoppingConditionReached(){
 		return evaluations >= maxEvaluations;
+	}
+	
+	protected AbstractBoundedArchive<DoubleSolution> getArchive(){
+		return archive;
+	}
+	
+	protected int getSubpopulationSize(){
+		return subpopulationSize;
 	}
 
 	@Override
@@ -408,29 +426,9 @@ public class CMODE implements Algorithm {
 
 	@Override
 	public Object getResult() {
-		return archive.getSolutionList();
+		return getArchive().getSolutionList();
 	}
 
-	public static void main(String[] args) {
-		List<Integer> il = new ArrayList<>();
-		il.add(5);il.add(10);il.add(3);
-		Collections.sort(il, new Comparator<Integer>() {
-
-			@Override
-			public int compare(Integer o1, Integer o2) {
-				return o1.compareTo(o2);
-			}
-		});
-		System.out.println(il);
-		Collections.sort(il, new Comparator<Integer>() {
-
-			@Override
-			public int compare(Integer o1, Integer o2) {
-				return o2.compareTo(o1);
-			}
-		});
-		System.out.println(il);
-	}
 }
 
 @SuppressWarnings("serial")

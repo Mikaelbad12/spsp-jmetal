@@ -36,7 +36,10 @@ public class DynamicPopulationCreatorExtended {
         if (propRepairedSolutions + propPreviousEventSolutions > 1.0) {
             throw new IllegalArgumentException("Sum of repairedSolution proportions must not exceed 1.0");
         }
-        if (algorithmID.equals("MS2MO")
+        
+        if(algorithmID.startsWith("CMODE")){
+        	this.size = settings.getSubpopulationSize();
+        } else if (algorithmID.equals("MS2MO")
                 || algorithmID.equals("MS2MODynamic")
                 ) {
             this.size = settings.getSwarmSize();
@@ -104,6 +107,7 @@ public class DynamicPopulationCreatorExtended {
         Collections.shuffle(list);
 
         try {
+        	//TODO por que não entrega a lista toda caso o n seja maior que o list.size??
             randomSublist = new ArrayList<>(list.subList(0, n));
         } catch (IndexOutOfBoundsException iobe) {
             SPSPLogger.warning(iobe.getMessage() + " - List size: " + list.size());

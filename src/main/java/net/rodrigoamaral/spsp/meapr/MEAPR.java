@@ -96,7 +96,6 @@ public class MEAPR extends AbstractParticleSwarmOptimization<DoubleSolution, Lis
 
     }
 
-    // TODO: what is a density estimator?
     protected void updateLeadersDensityEstimator() {
         leaders.computeDensityEstimator();
     }
@@ -115,7 +114,6 @@ public class MEAPR extends AbstractParticleSwarmOptimization<DoubleSolution, Lis
 
     @Override
     protected boolean isStoppingConditionReached() {
-//        System.out.println("Iteration: " + iterations + "/"+ maxIterations);
         return maxIterations < iterations;
     }
 

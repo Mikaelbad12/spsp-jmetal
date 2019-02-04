@@ -22,7 +22,9 @@ public class ExperimentSettings {
     private Double repairedSolutions;
     private Double histPropPreviousEventSolutions;
     private List<String> dynamicStrategies;
-    private Boolean useExtendedIntance;
+    private Boolean useExtendedIntance = Boolean.FALSE;
+    private Integer subpopulationSize;
+    private Boolean useBigArchive = Boolean.FALSE;
 
     public Integer getNumberOfRuns() {
         return numberOfRuns;
@@ -111,6 +113,22 @@ public class ExperimentSettings {
     public void setUseExtendedIntance(Boolean useExtendedIntance) {
     	this.useExtendedIntance = useExtendedIntance;
     }
+    
+    public Integer getSubpopulationSize() {
+    	return subpopulationSize;
+    }
+    
+    public void setSubpopulationSize(Integer subpopulationSize) {
+    	this.subpopulationSize = subpopulationSize;
+    }
+    
+    public Boolean getUseBigArchive() {
+    	return useBigArchive;
+    }
+    
+    public void setUseBigArchive(Boolean useBigArchive) {
+    	this.useBigArchive = useBigArchive;
+    }
 
     @Override
     public String toString() {
@@ -126,6 +144,7 @@ public class ExperimentSettings {
         sb.append("\n\thistPropPreviousEventSolutions = " + histPropPreviousEventSolutions);
         sb.append("\n\tdynamicStrategies = " + dynamicStrategies);
         sb.append("\n\tuseExtendedIntance = " + useExtendedIntance);
+        sb.append("\n\tsubpopulationSize = " + subpopulationSize);
         sb.append("\n}");
         return sb.toString();
     }

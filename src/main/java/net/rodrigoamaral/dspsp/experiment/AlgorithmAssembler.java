@@ -17,10 +17,13 @@ import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.DoubleSolution;
 import org.uma.jmetal.util.archive.BoundedArchive;
 import org.uma.jmetal.util.archive.impl.CrowdingDistanceArchive;
+import org.uma.jmetal.util.archive.impl.NonDominatedSolutionListArchive;
 import org.uma.jmetal.util.comparator.RankingAndCrowdingDistanceComparator;
 import org.uma.jmetal.util.pseudorandom.impl.MersenneTwisterGenerator;
 
 import net.rodrigoamaral.algorithms.ISwarm;
+import net.rodrigoamaral.algorithms.cmode.CMODEBuilder;
+import net.rodrigoamaral.algorithms.cmode.CMODEDynamicBuilder;
 import net.rodrigoamaral.algorithms.gde3.GDE3DynamicBuilder;
 import net.rodrigoamaral.algorithms.moead.MOEADDEBuilder;
 import net.rodrigoamaral.algorithms.moead.MOEADDEDynamicBuilder;
@@ -46,6 +49,8 @@ public class AlgorithmAssembler {
     private int swarmSize = 160;
     private final int maxMultiSwarmIterations;
     private int populationSize = 100;
+    private NonDominatedSolutionListArchive<DoubleSolution> bigArchive;
+    private boolean useHistoryArchive;
 
     public AlgorithmAssembler(final String algorithmID, ExperimentSettings settings) {
         this.objectiveEvaluations = getValueOrDefault(settings.getObjectiveEvaluations(), objectiveEvaluations);
@@ -72,9 +77,30 @@ public class AlgorithmAssembler {
         return algorithmID;
     }
 
-    public Algorithm<List<DoubleSolution>> assemble(Problem<DoubleSolution> problem, List<DoubleSolution> initialPopulation) {
+    public Algorithm<List<DoubleSolution>> assemble(Problem<DoubleSolution> problem, 
+    												List<DoubleSolution> initialPopulation) {
         this.initialPopulation = initialPopulation;
         return assemble(problem);
+    }
+    
+    public Algorithm<List<DoubleSolution>> assemble(Problem<DoubleSolution> problem, 
+    												NonDominatedSolutionListArchive<DoubleSolution> bigArchive) {
+        this.bigArchive = bigArchive;
+        return assemble(problem);
+    }
+    
+    public Algorithm<List<DoubleSolution>> assemble(Problem<DoubleSolution> problem, 
+													NonDominatedSolutionListArchive<DoubleSolution> bigArchive,
+													boolean useHistoryArchive) {
+    	this.bigArchive = bigArchive;
+    	this.useHistoryArchive = useHistoryArchive;
+    	return assemble(problem);
+    }
+    
+    public Algorithm<List<DoubleSolution>> assemble(Problem<DoubleSolution> problem, 
+													boolean useHistoryArchive) {
+    	this.useHistoryArchive = useHistoryArchive;
+    	return assemble(problem);
     }
 
     public void setObjectiveEvaluations(int objectiveEvaluations) {
@@ -189,15 +215,47 @@ public class AlgorithmAssembler {
                     .setPopulationSize(populationSize)
                     .build();
         } else if ("NSGAIIIDYNAMIC".equals(algorithmID.toUpperCase())) {
-                return new NSGAIIIDynamicBuilder(problem)
-                		.setInitialPopulation(initialPopulation)
-                		.setCrossoverOperator(crossover)
-                		.setMutationOperator(mutation)
-                        .setSelectionOperator(selection)
-                        .setMaxIterations(getMaxIterations())
-                        .setPopulationSize(populationSize)
-                        .build();
-        } else {
+        	return new NSGAIIIDynamicBuilder(problem)
+        			.setInitialPopulation(initialPopulation)
+        			.setCrossoverOperator(crossover)
+        			.setMutationOperator(mutation)
+        			.setSelectionOperator(selection)
+        			.setMaxIterations(getMaxIterations())
+        			.setPopulationSize(populationSize)
+        			.build();
+        } else if ("CMODE".equals(algorithmID.toUpperCase())){
+        	return new CMODEBuilder((DoubleProblem)problem)
+        			.setMaxEvaluations(getMaxIterations())
+        			.buildDefault();
+        } else if ("CMODESDE".equals(algorithmID.toUpperCase())){
+        	return new CMODEBuilder((DoubleProblem)problem)
+        			.setMaxEvaluations(getMaxIterations())
+        			.buildSDE();
+        } else if ("CMODESDENORM".equals(algorithmID.toUpperCase())){
+        	return new CMODEBuilder((DoubleProblem)problem)
+        			.setMaxEvaluations(getMaxIterations())
+        			.buildSDENorm();
+        } else if ("CMODEDYNAMIC".equals(algorithmID.toUpperCase())){
+        	return new CMODEDynamicBuilder((DoubleProblem)problem)
+        			.setBigArchive(bigArchive)
+        			.setUseHistoryArchive(useHistoryArchive)
+        			.setMaxEvaluations(getMaxIterations())
+        			.buildDefault();
+        } else if ("CMODESDEDYNAMIC".equals(algorithmID.toUpperCase())){
+        	return new CMODEDynamicBuilder((DoubleProblem)problem)
+        			.setBigArchive(bigArchive)
+        			.setUseHistoryArchive(useHistoryArchive)
+        			.setMaxEvaluations(getMaxIterations())
+        			.buildSDE();
+        } else if ("CMODESDENORMDYNAMIC".equals(algorithmID.toUpperCase())){
+        	return new CMODEDynamicBuilder((DoubleProblem)problem)
+        			.setBigArchive(bigArchive)
+        			.setUseHistoryArchive(useHistoryArchive)
+        			.setMaxEvaluations(getMaxIterations())
+        			.buildSDENorm();
+        }
+        
+        else {
             throw new IllegalArgumentException("Invalid algorithm ID: " + algorithmID);
         }
 

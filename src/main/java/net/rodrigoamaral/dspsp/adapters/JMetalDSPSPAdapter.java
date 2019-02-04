@@ -153,6 +153,7 @@ public class JMetalDSPSPAdapter {
         int missingSkills = missingSkills();
 
         if (missingSkills > 0) {
+//        	System.out.println("---------situação insoluvel-----------"); //TODO verificando quais pontos tornam schedule insoluvel
             solution.setObjective(getObjectiveDurationValue(), project.penalizeDuration(missingSkills));
             solution.setObjective(getObjectiveCostValue(), project.penalizeCost(missingSkills));
             solution.setObjective(getObjectiveRobustnessValue(), project.penalizeRobustness(missingSkills));
@@ -182,7 +183,7 @@ public class JMetalDSPSPAdapter {
                 }
                 
             } catch (InvalidSolutionException e) {
-
+            	
                 SPSPLogger.trace("Penalizing invalid repairedSolution: " + dm);
 
                 solution.setObjective(getObjectiveDurationValue(), project.penalizeDuration(1));
@@ -223,8 +224,8 @@ public class JMetalDSPSPAdapter {
 	protected void penalizeExtraObjectives(DoubleSolution solution, int missingSkills) {
 	}
 
-	private boolean mustIncludeStability(DoubleSolution solution) {
-        return project.getPreviousSchedule() != null && solution.getNumberOfObjectives() > 3;
+	protected boolean mustIncludeStability(DoubleSolution solution) {
+        return project.getPreviousSchedule() != null && solution.getNumberOfObjectives() > getStaticObjectives().length;
     }
 
     private DedicationMatrix repair(DoubleSolution solution) {

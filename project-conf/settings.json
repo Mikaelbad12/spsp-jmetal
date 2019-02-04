@@ -4,16 +4,15 @@
     "project-conf/dynamic-extended/dynamic_example_new1.json"
   ],
   "algorithms": [
-  	"GDE3",
-    "GDE3Dynamic",
-    "MOEADDE",
-    "MOEADDEDynamic",
-    "NSGAIII",
-    "NSGAIIIDynamic"
+  	"CMODEDYNAMIC",
+    "CMODESDEDYNAMIC",
+    "CMODESDENormDYNAMIC"
   ],
   "useExtendedIntance": true,
+  "useBigArchive": false,
   "objectiveEvaluations": 12000,
   "populationSize": 100,
+  "subpopulationSize": 20,
   "repairedSolutions": 0.3,
   "histPropPreviousEventSolutions": 0.2,
   "dynamicStrategies": [

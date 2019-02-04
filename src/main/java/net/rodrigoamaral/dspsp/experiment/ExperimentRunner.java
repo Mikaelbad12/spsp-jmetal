@@ -8,6 +8,7 @@ import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.uma.jmetal.algorithm.Algorithm;
 import org.uma.jmetal.solution.DoubleSolution;
 import org.uma.jmetal.util.AlgorithmRunner;
+import org.uma.jmetal.util.archive.impl.NonDominatedSolutionListArchive;
 
 import net.rodrigoamaral.dspsp.DSPSProblem;
 import net.rodrigoamaral.dspsp.DSPSProblemExtended;
@@ -21,7 +22,6 @@ import net.rodrigoamaral.dspsp.project.DynamicProject;
 import net.rodrigoamaral.dspsp.project.events.DynamicEvent;
 import net.rodrigoamaral.dspsp.results.SolutionFileWriter;
 import net.rodrigoamaral.dspsp.solution.DynamicPopulationCreator;
-import net.rodrigoamaral.dspsp.solution.DynamicPopulationCreatorExtended;
 import net.rodrigoamaral.dspsp.solution.SchedulingHistory;
 import net.rodrigoamaral.dspsp.solution.SchedulingResult;
 import net.rodrigoamaral.dspsp.solution.repair.EmployeeLeaveStrategy;
@@ -46,12 +46,16 @@ public class ExperimentRunner {
     private int reschedulings;
 
     public ExperimentRunner(final ExperimentSettings experimentSettings) {
-        this.experimentSettings = experimentSettings;
-        this.history = new SchedulingHistory();
+    	this.experimentSettings = experimentSettings;
+    	this.history = new SchedulingHistory();
     }
 
     private boolean useExtendedInstance(){
     	return experimentSettings.getUseExtendedIntance();
+    }
+    
+    private boolean useBigArchive(){
+    	return experimentSettings.getUseBigArchive();
     }
     
     private DSPSProblem loadProblemInstance(final String instanceFile) {
@@ -83,7 +87,7 @@ public class ExperimentRunner {
 
         SPSPLogger.info("Performing initial scheduling...");
 
-        Algorithm<List<DoubleSolution>> algorithm = assembler.assemble(problem);
+        Algorithm<List<DoubleSolution>> algorithm = assembler.assemble(problem, false);
 
         AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm).execute() ;
 
@@ -115,6 +119,12 @@ public class ExperimentRunner {
         	
         	DoubleSolution currentSchedule = initialSchedule;
         	
+        	NonDominatedSolutionListArchive<DoubleSolution> bigArchive = null;
+        	if(useBigArchive()){
+        		bigArchive = new NonDominatedSolutionListArchive<>();
+        		bigArchive.add(currentSchedule);
+        	}
+        	
         	for(List<DynamicEvent> eventList: reschedulingPoints){
         		reschedulings++;
         		
@@ -124,7 +134,7 @@ public class ExperimentRunner {
         		
         		SPSPLogger.rescheduling(reschedulings, eventList, run, experimentSettings.getNumberOfRuns());
         		
-	            SchedulingResult result = reschedule(project, eventList, currentSchedule, assembler);
+	            SchedulingResult result = reschedule(project, eventList, currentSchedule, assembler, bigArchive);
 	
 	            history.put(reschedulings, result.getSchedules());
 	            
@@ -141,6 +151,9 @@ public class ExperimentRunner {
 	                    .write();
 	
 	            currentSchedule = new DecisionMaker(result.getSchedules(), comparisonMatrix).chooseNewSchedule();
+	            if(useBigArchive()){
+	            	bigArchive.add(currentSchedule);
+	            }
         	}
         }else{
 	        DynamicProject project = problem.getProject();
@@ -218,15 +231,14 @@ public class ExperimentRunner {
 
         // First rescheduling doesn't take initial population
         if ((reschedulings > 1) && (assembler.getAlgorithmID().toUpperCase().endsWith("DYNAMIC"))) {
-
-            List<DoubleSolution> initialPopulation = new DynamicPopulationCreator(
+        	List<DoubleSolution> initialPopulation = new DynamicPopulationCreator(
                     problem,
                     history,
                     experimentSettings,
                     assembler.getAlgorithmID(),
                     repairStrategy
             ).create(reschedulings);
-
+        	
             algorithm = assembler.assemble(problem, initialPopulation);
         } else {
             algorithm = assembler.assemble(problem);
@@ -239,7 +251,9 @@ public class ExperimentRunner {
                 problem.getProject().isFinished());
     }
 	
-	private SchedulingResult reschedule(DynamicProject project, List<DynamicEvent> events, DoubleSolution lastSchedule, AlgorithmAssembler assembler) {
+	private SchedulingResult reschedule(DynamicProject project, List<DynamicEvent> events, DoubleSolution lastSchedule, 
+										AlgorithmAssembler assembler, 
+										NonDominatedSolutionListArchive<DoubleSolution> bigArchive) {
 		List<IScheduleRepairStrategy> repairStrategies = new ArrayList<>();
 		for(DynamicEvent event : events){
 	        switch (event.getType()) {
@@ -252,9 +266,6 @@ public class ExperimentRunner {
 	            case NEW_EMPLOYEE_ARRIVE:
 	                repairStrategies.add(new NewEmployeeStrategy(lastSchedule, project, (DynamicEmployee) event.getSubject()));
 	                break;
-//	            case REMOVE_TASK: TODO verificar
-	                //repairStrategies.add(new EmployeeReturnStrategy(lastSchedule, project, (DynamicEmployee) event.getSubject()));
-//	                break;
 	            default:
 	                break;
 	        }
@@ -267,20 +278,15 @@ public class ExperimentRunner {
 
         Algorithm<List<DoubleSolution>> algorithm;
 
-        // First rescheduling doesn't take initial population
+        // First rescheduling doesn't take history
         if ((reschedulings > 1) && (assembler.getAlgorithmID().toUpperCase().endsWith("DYNAMIC"))) {
-
-            List<DoubleSolution> initialPopulation = new DynamicPopulationCreatorExtended(
-                    problem,
-                    history,
-                    experimentSettings,
-                    assembler.getAlgorithmID(),
-                    repairStrategies
-            ).create(reschedulings);
-
-            algorithm = assembler.assemble(problem, initialPopulation);
+        	if(useBigArchive()){//big archive does not use internal history
+        		algorithm = assembler.assemble(problem, bigArchive, false);
+        	}else{
+        		algorithm = assembler.assemble(problem, true);
+        	}
         } else {
-            algorithm = assembler.assemble(problem);
+    		algorithm = assembler.assemble(problem, bigArchive, false);
         }
 
         AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm).execute();

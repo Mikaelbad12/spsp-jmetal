@@ -90,4 +90,9 @@ public class JMetalDSPSPExtendedAdapter extends JMetalDSPSPAdapter {
 		return Objective.DURATION.getValue();
 	}
 	
+//	@Override TODO remover
+//	protected boolean mustIncludeStability(DoubleSolution solution) {
+//		return project.getPreviousSchedule() != null && solution.getNumberOfObjectives() > 4;
+//	}
+	
 }
