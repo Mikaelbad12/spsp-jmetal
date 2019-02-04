@@ -85,19 +85,9 @@ public class ShiftedStrengthRawFitness <S extends Solution<?>>
 				}
 			}
 		}
-		//TODO normalizar o distance?
-		//para normalizar encontrar max e min depois d[i][j] - min / max - min
+		//to normalize need find max and min, then d[i][j] - min / max - min
 		//min = 0
 		if(normalize){
-//			double max = Double.MIN_VALUE;
-//			for (int i = 0; i < distance.length; i++){
-//				for (int j = i + 1; j < distance.length; j++){
-//					if(distance[i][j] > max){
-//						max = distance[i][j];
-//					}
-//				}
-//			}
-			
 			for (int i = 0; i < distance.length; i++){
 				for (int j = i + 1; j < distance.length; j++){
 					distance[i][j] = distance[i][j] / max; 

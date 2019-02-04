@@ -225,7 +225,8 @@ public class JMetalDSPSPAdapter {
 	}
 
 	protected boolean mustIncludeStability(DoubleSolution solution) {
-        return project.getPreviousSchedule() != null && solution.getNumberOfObjectives() > getStaticObjectives().length;
+        return project.getPreviousSchedule() != null && 
+        		solution.getNumberOfObjectives() > getStaticObjectives().length;
     }
 
     private DedicationMatrix repair(DoubleSolution solution) {

@@ -53,96 +53,11 @@ public class CMODE implements Algorithm {
 	
 	@Override
 	public void run() {
-		
-//		for(int m = 0; m < problem.getNumberOfObjectives(); m++){
-//			miCR[m] = 0.5;
-//			miF[m] = 0.5;
-//			
-//			population.put(m, new ArrayList<>(subpopulationSize));
-//			for(int i = 0; i < subpopulationSize; i++){
-//				DoubleSolution newIndividual = problem.createSolution();
-//				evaluate(newIndividual);
-//				population.get(m).add(newIndividual);
-//			}
-//			
-//			DoubleSolution best = population.get(m).get(0);
-//			for(int i = 1; i < subpopulationSize; i++){
-//				if(best.getObjective(m) > population.get(m).get(i).getObjective(m)){
-//					best = population.get(m).get(i);
-//				}
-//			}
-//			localBest.put(m, best);
-//		}
-		
 		createInitialPopulationAndSetBest();
-		
-//		for(List<DoubleSolution> subpop: population.values()){
-//			List<DoubleSolution> nonDominateSolutions = SolutionListUtils.getNondominatedSolutions(subpop);
-//			for(DoubleSolution s: nonDominateSolutions){
-//				archive.add(new ExtendedDefaultDoubleSolution((DefaultDoubleSolution)s, 0.5, 0.9));
-//			}
-//		}
 		
 		updateInitialArchive();
 
 		while(!isStoppingConditionReached()){
-//			for(int m = 0; m < problem.getNumberOfObjectives(); m++){
-//				List<Double> successfulMutationFactor = new ArrayList<>();
-//				List<Double> successfulCrossoverFactor = new ArrayList<>();
-//				
-//				List<DoubleSolution> trialList = new ArrayList<>(subpopulationSize);
-//				List<DoubleSolution> subpopulation = population.get(m);
-//				for(int i=0; i < subpopulation.size(); i++){
-//					DoubleSolution individual = subpopulation.get(i);
-//					double individualMutationFactorM = generateMutationFactor(miF[m]);
-//					double individualCrossoverFactorM = generateCrossoverFactor(miCR[m]);
-//					
-//					DoubleSolution individualArchive = archive.get(random.nextInt(archive.size()));
-//					
-////					int x1, x2;
-////					do{
-////						x1 = random.nextInt(subpopulation.size());
-////						x2 = random.nextInt(subpopulation.size());
-////					}while(x1 == x2 || i == x1 || i == x2);
-//					int x1, x2;
-//					do{
-//						x1 = random.nextInt(subpopulation.size());
-//					}while(i == x1);
-//					do{
-//						x2 = random.nextInt(subpopulation.size());
-//					}while(x1 == x2 || i == x2);
-//					DoubleSolution mutantVector = generateMutantVector(individual, individualMutationFactorM, 
-//																  localBest.get(m), individualArchive,
-//																  subpopulation.get(x1), 
-//																  subpopulation.get(x2));
-//					DoubleSolution trialVector = generateTrialVector(individual, mutantVector, individualCrossoverFactorM);
-//					evaluate(trialVector);
-//					trialList.add(new ExtendedDefaultDoubleSolution((DefaultDoubleSolution)trialVector, 
-//													individualMutationFactorM, individualCrossoverFactorM));
-//				}
-//				
-//				for(int i = 0; i < subpopulationSize; i++){
-//					if(trialList.get(i).getObjective(m) < subpopulation.get(i).getObjective(m)){
-//						population.get(m).remove(i);
-//						population.get(m).add(i, trialList.get(i));
-//						ExtendedDefaultDoubleSolution solution = (ExtendedDefaultDoubleSolution)trialList.get(i);
-//						successfulCrossoverFactor.add(solution.getCrossoverFactor());
-//						successfulMutationFactor.add(solution.getMutationFactor());
-//					}
-//				}
-//				
-//				miF[m] = updateLocationParameter(miF[m], lehmerMean(successfulMutationFactor));
-//				miCR[m] = updateMean(miCR[m], arithmeticMean(successfulCrossoverFactor));
-//				
-//				DoubleSolution best = population.get(m).get(0);
-//				for(int i = 1; i < subpopulationSize; i++){
-//					if(best.getObjective(m) > population.get(m).get(i).getObjective(m)){
-//						best = population.get(m).get(i);
-//					}
-//				}
-//				localBest.put(m, best);
-//			}
-			
 			executeDEforSubpopulations();
 			
 			List<DoubleSolution> offspringArchive = executeDEforArchive();
@@ -175,11 +90,6 @@ public class CMODE implements Algorithm {
 				
 				DoubleSolution individualArchive = getArchive().get(random.nextInt(getArchive().size()));
 				
-//				int x1, x2;
-//				do{
-//					x1 = random.nextInt(subpopulation.size());
-//					x2 = random.nextInt(subpopulation.size());
-//				}while(x1 == x2 || i == x1 || i == x2);
 				int x1, x2;
 				do{
 					x1 = random.nextInt(subpopulation.size());
