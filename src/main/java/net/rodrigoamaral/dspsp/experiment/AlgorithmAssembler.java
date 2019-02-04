@@ -235,19 +235,25 @@ public class AlgorithmAssembler {
         	return new CMODEBuilder((DoubleProblem)problem)
         			.setMaxEvaluations(getMaxIterations())
         			.buildSDENorm();
-        } else if ("CMODEDYNAMIC".equals(algorithmID.toUpperCase())){
+        } else if ("CMODEDYNAMIC".equals(algorithmID.toUpperCase()) ||
+        		   "CMODEBIGDYNAMIC".equals(algorithmID.toUpperCase()) ||
+        		   "CMODEFULLDYNAMIC".equals(algorithmID.toUpperCase())){
         	return new CMODEDynamicBuilder((DoubleProblem)problem)
         			.setBigArchive(bigArchive)
         			.setUseHistoryArchive(useHistoryArchive)
         			.setMaxEvaluations(getMaxIterations())
         			.buildDefault();
-        } else if ("CMODESDEDYNAMIC".equals(algorithmID.toUpperCase())){
+        } else if ("CMODESDEDYNAMIC".equals(algorithmID.toUpperCase()) ||
+        		   "CMODESDEBIGDYNAMIC".equals(algorithmID.toUpperCase()) ||
+        		   "CMODESDEFULLDYNAMIC".equals(algorithmID.toUpperCase())){
         	return new CMODEDynamicBuilder((DoubleProblem)problem)
         			.setBigArchive(bigArchive)
         			.setUseHistoryArchive(useHistoryArchive)
         			.setMaxEvaluations(getMaxIterations())
         			.buildSDE();
-        } else if ("CMODESDENORMDYNAMIC".equals(algorithmID.toUpperCase())){
+        } else if ("CMODESDENORMDYNAMIC".equals(algorithmID.toUpperCase()) ||
+        		   "CMODESDENORMBIGDYNAMIC".equals(algorithmID.toUpperCase()) ||
+        		   "CMODESDENORMFULLDYNAMIC".equals(algorithmID.toUpperCase())){
         	return new CMODEDynamicBuilder((DoubleProblem)problem)
         			.setBigArchive(bigArchive)
         			.setUseHistoryArchive(useHistoryArchive)

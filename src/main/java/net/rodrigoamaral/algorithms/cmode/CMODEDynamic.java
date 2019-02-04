@@ -23,7 +23,6 @@ public class CMODEDynamic extends CMODE {
 		
 		this.useHistoryArchive = useHistoryArchive;
 		if(!useHistoryArchive){
-			System.out.println("history archive");
 			historyArchive = archive;
 		}
 	}
@@ -33,10 +32,12 @@ public class CMODEDynamic extends CMODE {
 						boolean useHistoryArchive) {
 		super(maxEvaluations, subpopulationSize, archive, problem);
 
-		System.out.println("big archive");
 		this.bigArchive = bigArchive;
 		this.useHistoryArchive = useHistoryArchive;
-		historyArchive = null;
+//		historyArchive = null;
+		if(!useHistoryArchive){
+			historyArchive = archive;
+		}
 	}
 
 	//TODO implementar arquivo que não zera a cada nova execução do algoritmo mas é reavaliado e 

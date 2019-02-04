@@ -122,7 +122,7 @@ public class ExperimentRunner {
         	NonDominatedSolutionListArchive<DoubleSolution> bigArchive = null;
         	if(useBigArchive()){
         		bigArchive = new NonDominatedSolutionListArchive<>();
-        		bigArchive.add(currentSchedule);
+//        		bigArchive.add(currentSchedule);
         	}
         	
         	for(List<DynamicEvent> eventList: reschedulingPoints){
@@ -151,7 +151,7 @@ public class ExperimentRunner {
 	                    .write();
 	
 	            currentSchedule = new DecisionMaker(result.getSchedules(), comparisonMatrix).chooseNewSchedule();
-	            if(useBigArchive()){
+	            if(useBigArchive() && currentSchedule != null){
 	            	bigArchive.add(currentSchedule);
 	            }
         	}
