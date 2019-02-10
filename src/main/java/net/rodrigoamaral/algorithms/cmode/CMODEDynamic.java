@@ -55,7 +55,6 @@ public class CMODEDynamic extends CMODE {
 	
 	@Override
 	protected List<DoubleSolution> executeDEforArchive() {
-		//TODO validar com andre
 		if(bigArchive == null || bigArchive.size() == 0){
 			return super.executeDEforArchive();
 		}

@@ -296,6 +296,7 @@ public class ExperimentRunner {
                 problem.getProject().isFinished());
     }
 
+	//TODO normalização geral dos objetivos - verificar em mais 2 instancias se o norm eh melhor mesmo
     /**
      * Executes algorithms for each problem instance.
      *
