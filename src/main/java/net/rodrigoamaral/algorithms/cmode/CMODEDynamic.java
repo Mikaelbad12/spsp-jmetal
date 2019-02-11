@@ -40,8 +40,6 @@ public class CMODEDynamic extends CMODE {
 		}
 	}
 
-	//TODO implementar arquivo que não zera a cada nova execução do algoritmo mas é reavaliado e 
-	//outro arquivo que guarda sem reavaliar e eh usado no deforarchive (vulgo arquivao)
 	@Override
 	public void run() {
 		if(useHistoryArchive){

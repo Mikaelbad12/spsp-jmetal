@@ -1,15 +1,13 @@
 {
   "numberOfRuns": 1,
   "instanceFiles": [
-    "project-conf/dynamic-extended/dynamic_example_new1.json"
+    "project-conf/dynamic-extended/dynamic_example_new2.json"
   ],
   "algorithms": [
-  	"CMODEFullDYNAMIC",
-    "CMODESDEFullDYNAMIC",
-    "CMODESDENormFullDYNAMIC"
+  	"CMODE"
   ],
   "useExtendedIntance": true,
-  "useBigArchive": true,
+  "useBigArchive": false,
   "objectiveEvaluations": 12000,
   "populationSize": 100,
   "subpopulationSize": 20,

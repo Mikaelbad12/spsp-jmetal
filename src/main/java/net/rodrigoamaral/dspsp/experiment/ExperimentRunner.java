@@ -286,7 +286,7 @@ public class ExperimentRunner {
         		algorithm = assembler.assemble(problem, true);
         	}
         } else {
-    		algorithm = assembler.assemble(problem, bigArchive, false);
+    		algorithm = assembler.assemble(problem, false);
         }
 
         AlgorithmRunner algorithmRunner = new AlgorithmRunner.Executor(algorithm).execute();
@@ -296,7 +296,10 @@ public class ExperimentRunner {
                 problem.getProject().isFinished());
     }
 
-	//TODO normalização geral dos objetivos - verificar em mais 2 instancias se o norm eh melhor mesmo
+	//TODO normalizacao geral dos objetivos - verificar em mais 2 instancias se o norm eh melhor mesmo
+	//apos definir ql o que obtem melhor hipervolume so utilizar ele com as questoes do arquivo
+	//arquivo historico sem apagar, arquivao sem reavalidar, arquivao reavaliando, ajuste proativo
+	//Ajustar todas as instancias (mandar para o email)
     /**
      * Executes algorithms for each problem instance.
      *

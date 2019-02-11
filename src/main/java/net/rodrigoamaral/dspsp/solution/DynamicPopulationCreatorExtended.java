@@ -107,7 +107,7 @@ public class DynamicPopulationCreatorExtended {
         Collections.shuffle(list);
 
         try {
-        	//TODO por que não entrega a lista toda caso o n seja maior que o list.size??
+        	//TODO por que nao entrega a lista toda caso o n seja maior que o list.size??
             randomSublist = new ArrayList<>(list.subList(0, n));
         } catch (IndexOutOfBoundsException iobe) {
             SPSPLogger.warning(iobe.getMessage() + " - List size: " + list.size());
