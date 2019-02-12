@@ -111,9 +111,9 @@ public class DynamicProjectExtendedConfigLoader extends DynamicProjectConfigLoad
         	double time = extendedInstance.getDynamic_parallel_time().get(i);
         	List<Integer> eventsCode = extendedInstance.getDynamic_parallel_class().get(i);
         	events.add(i, new ArrayList<DynamicEvent>());
-        	System.out.println("Rescheduling - " + (i+1)); //TODO ativar para ver index de eventos que tornam o problema insoluvel
+//        	System.out.println("Rescheduling - " + (i+1)); //TODO ativar para ver index de eventos que tornam o problema insoluvel
         	for(Integer eventCode: eventsCode){
-        		System.out.println(index);
+//        		System.out.println(index);
 	            int urgentTaskId = instance.getDynamic_rushjob_number().get(index) + instance.getTask_number();
 	            int leavingEmployeeId = instance.getDynamic_labour_leave_number().get(index);
 	            int returningEmployeeId = instance.getDynamic_labour_return_number().get(index);

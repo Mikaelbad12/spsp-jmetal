@@ -1,7 +1,7 @@
 {
   "numberOfRuns": 1,
   "instanceFiles": [
-    "project-conf/dynamic-extended/dynamic_example_new2.json"
+    "project-conf/dynamic-extended/dynamic_example_new1.json"
   ],
   "algorithms": [
   	"CMODE"

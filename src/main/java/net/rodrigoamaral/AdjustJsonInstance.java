@@ -22,8 +22,24 @@ public class AdjustJsonInstance {
 
 	public static void main(String[] args) throws IOException {
 //		adjustValuesToList();
-		removeEventsUnsolvable(Arrays.asList(3, 4, 32, 34, 44, 45, 55, 56, 70, 72, 133, 134, 145, 146), 
-								"dynamic_example_new1.json");
+//		removeEventsUnsolvable(Arrays.asList(3,4,32,34,44,45,55,56,70,72,133,134,145,146),"dynamic_example_new1.json");
+//		dynamic_example_new2.json has no problem
+//		dynamic_example_new3.json has no problem
+//		removeEventsUnsolvable(Arrays.asList(6, 10), "dynamic_example_new4.json");
+//		dynamic_example_new5.json has no problem
+//		dynamic_example_new6.json has no problem
+//		removeEventsUnsolvable(Arrays.asList(4,7,24,25,26,31,48,49,57,58,60,61), "dynamic_example_new7.json");
+//		dynamic_example_new8.json has no problem
+//		dynamic_example_new9.json has no problem
+//		dynamic_example_new10.json has no problem
+//		dynamic_example_new11.json has no problem
+//		dynamic_example_new12.json has no problem
+//		removeEventsUnsolvable(Arrays.asList(17,19,24,25,34,35,47,48,63,65,136,137), "dynamic_example_new13.json");
+//		dynamic_example_new14.json has no problem
+//		dynamic_example_new15.json has no problem
+//		dynamic_example_new16.json has no problem
+//		dynamic_example_new17.json has no problem
+//		dynamic_example_new18.json has no problem
 	}
 
 	@SuppressWarnings("unchecked")

@@ -153,7 +153,7 @@ public class JMetalDSPSPAdapter {
         int missingSkills = missingSkills();
 
         if (missingSkills > 0) {
-        	System.out.println("---------situacao insoluvel-----------"); //TODO verificando quais pontos tornam schedule insoluvel
+//        	System.out.println("---------situacao insoluvel-----------"); //TODO verificando quais pontos tornam schedule insoluvel
             solution.setObjective(getObjectiveDurationValue(), project.penalizeDuration(missingSkills));
             solution.setObjective(getObjectiveCostValue(), project.penalizeCost(missingSkills));
             solution.setObjective(getObjectiveRobustnessValue(), project.penalizeRobustness(missingSkills));
