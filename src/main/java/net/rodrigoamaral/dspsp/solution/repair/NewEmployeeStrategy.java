@@ -9,11 +9,12 @@ import net.rodrigoamaral.logging.SPSPLogger;
 
 public class NewEmployeeStrategy extends EmployeeReturnStrategy {
 
-    public NewEmployeeStrategy(DoubleSolution _solution, DynamicProject _project, DynamicEmployee employee) {
-        super(_solution, _project, employee);
+    public NewEmployeeStrategy(DynamicProject _project, DynamicEmployee employee) {
+        super(_project, employee);
     }
 
-    protected void addDebugLog(DynamicTask task, int i, double newDed) {
-    	SPSPLogger.debug("Repairing new employee arrival (e = " + employee.index() + ", t = " + task.index() + ") " + repairedSolution.getVariableValue(i) + " -> " + newDed);
+    @Override
+    protected void addDebugLog(DynamicTask task, int i, double newDed, DoubleSolution solution) {
+    	SPSPLogger.debug("Repairing new employee arrival (e = " + employee.index() + ", t = " + task.index() + ") " + solution.getVariableValue(i) + " -> " + newDed);
 	}
 }

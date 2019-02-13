@@ -33,6 +33,7 @@ import net.rodrigoamaral.algorithms.nsgaiii.NSGAIIIBuilder;
 import net.rodrigoamaral.algorithms.nsgaiii.NSGAIIIDynamicBuilder;
 import net.rodrigoamaral.algorithms.smpso.SMPSOBuilder;
 import net.rodrigoamaral.algorithms.smpso.SMPSODynamicBuilder;
+import net.rodrigoamaral.dspsp.solution.repair.IScheduleRepairStrategy;
 import net.rodrigoamaral.jmetal.util.evaluator.impl.SequentialSolutionListEvaluator;
 
 /**
@@ -51,6 +52,8 @@ public class AlgorithmAssembler {
     private int populationSize = 100;
     private NonDominatedSolutionListArchive<DoubleSolution> bigArchive;
     private boolean useHistoryArchive;
+    private boolean evaluateBigArchive;
+    private List<IScheduleRepairStrategy> repairStrategies;
 
     public AlgorithmAssembler(final String algorithmID, ExperimentSettings settings) {
         this.objectiveEvaluations = getValueOrDefault(settings.getObjectiveEvaluations(), objectiveEvaluations);
@@ -98,8 +101,25 @@ public class AlgorithmAssembler {
     }
     
     public Algorithm<List<DoubleSolution>> assemble(Problem<DoubleSolution> problem, 
+    		NonDominatedSolutionListArchive<DoubleSolution> bigArchive,
+    		boolean useHistoryArchive, boolean evaluateBigArchive) {
+    	this.bigArchive = bigArchive;
+    	this.useHistoryArchive = useHistoryArchive;
+    	this.evaluateBigArchive = evaluateBigArchive;
+    	return assemble(problem);
+    }
+    
+    public Algorithm<List<DoubleSolution>> assemble(Problem<DoubleSolution> problem, 
 													boolean useHistoryArchive) {
     	this.useHistoryArchive = useHistoryArchive;
+    	return assemble(problem);
+    }
+    
+    public Algorithm<List<DoubleSolution>> assemble(Problem<DoubleSolution> problem, 
+													boolean useHistoryArchive,
+													List<IScheduleRepairStrategy> repairStrategies) {
+    	this.useHistoryArchive = useHistoryArchive;
+    	this.repairStrategies = repairStrategies;
     	return assemble(problem);
     }
 
@@ -237,26 +257,40 @@ public class AlgorithmAssembler {
         			.buildSDENorm();
         } else if ("CMODEDYNAMIC".equals(algorithmID.toUpperCase()) ||
         		   "CMODEBIGDYNAMIC".equals(algorithmID.toUpperCase()) ||
+        		   "CMODEREPAIRDYNAMIC".equals(algorithmID.toUpperCase()) ||
+        		   "CMODEBIGREDYNAMIC".equals(algorithmID.toUpperCase()) ||
+        		   "CMODEFULLREDYNAMIC".equals(algorithmID.toUpperCase()) ||
         		   "CMODEFULLDYNAMIC".equals(algorithmID.toUpperCase())){
         	return new CMODEDynamicBuilder((DoubleProblem)problem)
         			.setBigArchive(bigArchive)
         			.setUseHistoryArchive(useHistoryArchive)
+        			.setRepairStrategies(repairStrategies)
         			.setMaxEvaluations(getMaxIterations())
         			.buildDefault();
         } else if ("CMODESDEDYNAMIC".equals(algorithmID.toUpperCase()) ||
         		   "CMODESDEBIGDYNAMIC".equals(algorithmID.toUpperCase()) ||
+        		   "CMODESDEREPAIRDYNAMIC".equals(algorithmID.toUpperCase()) ||
+        		   "CMODESDEBIGREDYNAMIC".equals(algorithmID.toUpperCase()) ||
+        		   "CMODESDEFULLREDYNAMIC".equals(algorithmID.toUpperCase()) ||
         		   "CMODESDEFULLDYNAMIC".equals(algorithmID.toUpperCase())){
         	return new CMODEDynamicBuilder((DoubleProblem)problem)
         			.setBigArchive(bigArchive)
         			.setUseHistoryArchive(useHistoryArchive)
+        			.setEvaluateBigArchive(evaluateBigArchive)
+        			.setRepairStrategies(repairStrategies)
         			.setMaxEvaluations(getMaxIterations())
         			.buildSDE();
         } else if ("CMODESDENORMDYNAMIC".equals(algorithmID.toUpperCase()) ||
         		   "CMODESDENORMBIGDYNAMIC".equals(algorithmID.toUpperCase()) ||
+        		   "CMODESDENORMREPAIRDYNAMIC".equals(algorithmID.toUpperCase()) ||
+        		   "CMODESDENORMBIGREDYNAMIC".equals(algorithmID.toUpperCase()) ||
+        		   "CMODESDENORMFULLREDYNAMIC".equals(algorithmID.toUpperCase()) ||
         		   "CMODESDENORMFULLDYNAMIC".equals(algorithmID.toUpperCase())){
         	return new CMODEDynamicBuilder((DoubleProblem)problem)
         			.setBigArchive(bigArchive)
         			.setUseHistoryArchive(useHistoryArchive)
+        			.setEvaluateBigArchive(evaluateBigArchive)
+        			.setRepairStrategies(repairStrategies)
         			.setMaxEvaluations(getMaxIterations())
         			.buildSDENorm();
         }

@@ -17,28 +17,42 @@ public class EmployeeReturnStrategy extends ScheduleRepairStrategy {
         super(_solution, _project);
         this.employee = employee;
     }
+    
+    public EmployeeReturnStrategy(DynamicProject _project, DynamicEmployee employee) {
+        super(_project);
+        this.employee = employee;
+    }
+    
+    public void repair(DoubleSolution solution) {
+    	DedicationMatrix schedule = new SolutionConverter(project).convert(solution);
+    	repair(solution, schedule);
+    }
 
     @Override
     public DoubleSolution repair() {
-        for (DynamicTask task: project.getAvailableTasks()) {
+        repair(repairedSolution, schedule);
+        return repairedSolution;
+    }
+    
+    private void repair(DoubleSolution solution, DedicationMatrix schedule) {
+    	for (DynamicTask task: project.getAvailableTasks()) {
             if (TaskManager.teamSize(task, schedule) < task.getMaximumHeadcount()) {
                 for (Integer sk: employee.getSkills()) {
                     if (task.getSkills().contains(sk)) {
                         int i = SolutionConverter.encode(employee.index(), task.index());
                         double newDed = 0.1;
-                        if (repairedSolution.getVariableValue(i) < DedicationMatrix.MIN_DED_THRESHOLD) {
-                            addDebugLog(task, i, newDed);
-                            repairedSolution.setVariableValue(i, newDed);
+                        if (solution.getVariableValue(i) < DedicationMatrix.MIN_DED_THRESHOLD) {
+                            addDebugLog(task, i, newDed, solution);
+                            solution.setVariableValue(i, newDed);
                         }
                     }
                 }
             }
         }
-        normalize();
-        return repairedSolution;
+        normalize(solution);
     }
 
-	protected void addDebugLog(DynamicTask task, int i, double newDed) {
-		SPSPLogger.debug("Repairing employee return (e = " + employee.index() + ", t = " + task.index() + ") " + repairedSolution.getVariableValue(i) + " -> " + newDed);
+	protected void addDebugLog(DynamicTask task, int i, double newDed, DoubleSolution solution) {
+		SPSPLogger.debug("Repairing employee return (e = " + employee.index() + ", t = " + task.index() + ") " + solution.getVariableValue(i) + " -> " + newDed);
 	}
 }

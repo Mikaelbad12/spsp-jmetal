@@ -258,13 +258,13 @@ public class ExperimentRunner {
 		for(DynamicEvent event : events){
 	        switch (event.getType()) {
 	            case EMPLOYEE_LEAVE:
-	                repairStrategies.add(new EmployeeLeaveStrategy(lastSchedule, project, (DynamicEmployee) event.getSubject()));
+	                repairStrategies.add(new EmployeeLeaveStrategy(project, (DynamicEmployee) event.getSubject()));
 	                break;
 	            case EMPLOYEE_RETURN:
-	                repairStrategies.add(new EmployeeReturnStrategy(lastSchedule, project, (DynamicEmployee) event.getSubject()));
+	                repairStrategies.add(new EmployeeReturnStrategy(project, (DynamicEmployee) event.getSubject()));
 	                break;
 	            case NEW_EMPLOYEE_ARRIVE:
-	                repairStrategies.add(new NewEmployeeStrategy(lastSchedule, project, (DynamicEmployee) event.getSubject()));
+	                repairStrategies.add(new NewEmployeeStrategy(project, (DynamicEmployee) event.getSubject()));
 	                break;
 	            default:
 	                break;
@@ -281,9 +281,9 @@ public class ExperimentRunner {
         // First rescheduling doesn't take history
         if ((reschedulings > 1) && (assembler.getAlgorithmID().toUpperCase().endsWith("DYNAMIC"))) {
         	if(useBigArchive()){//big archive does not use internal history
-        		algorithm = assembler.assemble(problem, bigArchive, false);
+        		algorithm = assembler.assemble(problem, bigArchive, false, false);
         	}else{
-        		algorithm = assembler.assemble(problem, true);
+        		algorithm = assembler.assemble(problem, true, repairStrategies);
         	}
         } else {
     		algorithm = assembler.assemble(problem, false);
@@ -296,10 +296,7 @@ public class ExperimentRunner {
                 problem.getProject().isFinished());
     }
 
-	//TODO normalizacao geral dos objetivos - verificar em mais 2 instancias se o norm eh melhor mesmo
-	//apos definir ql o que obtem melhor hipervolume so utilizar ele com as questoes do arquivo
-	//arquivo historico sem apagar, arquivao sem reavalidar, arquivao reavaliando, ajuste proativo
-	//Ajustar todas as instancias (mandar para o email)
+	//TODO normalizacao geral dos objetivos 
     /**
      * Executes algorithms for each problem instance.
      *

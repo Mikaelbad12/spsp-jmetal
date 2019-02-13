@@ -25,13 +25,22 @@ public abstract class ScheduleRepairStrategy implements IScheduleRepairStrategy 
         this.project = _project;
         this.schedule = new SolutionConverter(_project).convert(_solution);
     }
+    
+    public ScheduleRepairStrategy(DynamicProject _project) {
+        this.project = _project;
+        this.schedule = null;
+    }
 
     public void normalize() {
+    	normalize(repairedSolution);
+    }
+    
+    public void normalize(DoubleSolution solution) {
         for (DynamicTask t : project.getActiveTasks()) {
             for (DynamicEmployee e : project.getAvailableEmployees()) {
                 final int i = SolutionConverter.encode(e.index(), t.index());
-                double n = repairedSolution.getVariableValue(i) / max(1, dedicationSum(repairedSolution, project.getActiveTasks(), e) / e.getMaxDedication());
-                repairedSolution.setVariableValue(i, n);
+                double n = solution.getVariableValue(i) / max(1, dedicationSum(solution, project.getActiveTasks(), e) / e.getMaxDedication());
+                solution.setVariableValue(i, n);
             }
         }
     }

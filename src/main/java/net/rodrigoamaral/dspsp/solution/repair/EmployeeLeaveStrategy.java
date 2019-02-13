@@ -13,6 +13,7 @@ import net.rodrigoamaral.dspsp.project.DynamicEmployee;
 import net.rodrigoamaral.dspsp.project.DynamicProject;
 import net.rodrigoamaral.dspsp.project.tasks.DynamicTask;
 import net.rodrigoamaral.dspsp.project.tasks.TaskManager;
+import net.rodrigoamaral.dspsp.solution.DedicationMatrix;
 import net.rodrigoamaral.logging.SPSPLogger;
 
 public class EmployeeLeaveStrategy extends ScheduleRepairStrategy {
@@ -23,11 +24,25 @@ public class EmployeeLeaveStrategy extends ScheduleRepairStrategy {
         super(schedule, project);
         this.employee = employee;
     }
+    
+    public EmployeeLeaveStrategy(DynamicProject project, DynamicEmployee employee) {
+        super(project);
+        this.employee = employee;
+    }
+    
+    public void repair(DoubleSolution solution) {
+    	DedicationMatrix schedule = new SolutionConverter(project).convert(solution);
+    	repair(solution, schedule);
+    }
 
     @Override
     public DoubleSolution repair() {
-
-        List<Integer> assignedTasks = TaskManager.getEmployeeAssignedTasks(schedule, employee);
+    	repair(repairedSolution, schedule);
+        return repairedSolution;
+    }
+    
+    private void repair(DoubleSolution solution, DedicationMatrix schedule) {
+    	List<Integer> assignedTasks = TaskManager.getEmployeeAssignedTasks(schedule, employee);
 
         for (Integer t: assignedTasks) {
 
@@ -35,7 +50,7 @@ public class EmployeeLeaveStrategy extends ScheduleRepairStrategy {
 
             Set<Integer> missingSkills = new HashSet<>(assignedTask.getSkills());
 
-            // ﻿remaining employees in the task team can satisfy the task skill constraint
+            // remaining employees in the task team can satisfy the task skill constraint
             for (Integer e: remainingEmployees()) {
                 DynamicEmployee remainingEmployee = project.getEmployeeByIndex(e);
                 if (TaskManager.getEmployeesAssignedToTask(schedule, assignedTask, project).contains(remainingEmployee)) {
@@ -43,7 +58,7 @@ public class EmployeeLeaveStrategy extends ScheduleRepairStrategy {
                 }
             }
 
-            // ﻿Otherwise, other available employees with relatively higher proficiencies are found to join the task team to satisfy the skill requirement.
+            // Otherwise, other available employees with relatively higher proficiencies are found to join the task team to satisfy the skill requirement.
             if (!missingSkills.isEmpty()) {
                 List<DynamicEmployee> employeesNotAssigned = TaskManager.getEmployeesNotAssignedToTask(schedule, assignedTask, project);
                 employeesNotAssigned = project.getSortedTeamByProficiencyInTask(employeesNotAssigned, assignedTask);
@@ -58,21 +73,11 @@ public class EmployeeLeaveStrategy extends ScheduleRepairStrategy {
                 // If there are employees with the required skills allocate dedication to the task
                 if (!employeesWithSkills.isEmpty()) {
                     for (DynamicEmployee ews: employeesWithSkills) {
-//                        double empTotalDedication = 0.0;
-//                        for (int j = 0; j < schedule.getTasks(); j++) {
-//                            empTotalDedication += schedule.getDedication(ews.index(), j);
-//                        }
-//                        final double delta = ews.getMaxDedication() - empTotalDedication;
-//                        System.out.println("ews.getMaxDedication() = " + ews.getMaxDedication());
-//                        System.out.println("empTotalDedication = " + empTotalDedication);
-//                        System.out.println("delta = " + delta);
-//                        double availableDedication = delta < 0.0 ? 0.0 : delta;
-//                        double newDed = fillDedication(t, employeesWithSkills, ews, availableDedication);
                         double newDed = schedule.getDedication(employee.index(), t);
 
                         int i = SolutionConverter.encode(ews.index(), t);
-                        SPSPLogger.debug("Repairing employee leave (e = " + ews.index() + ", t = " + t + ") " + repairedSolution.getVariableValue(i) + " -> " + newDed);
-                        repairedSolution.setVariableValue(i, newDed);
+                        SPSPLogger.debug("Repairing employee leave (e = " + ews.index() + ", t = " + t + ") " + solution.getVariableValue(i) + " -> " + newDed);
+                        solution.setVariableValue(i, newDed);
 
                     }
                 } else {
@@ -82,18 +87,8 @@ public class EmployeeLeaveStrategy extends ScheduleRepairStrategy {
             }
 
         }
-        normalize();
-        return repairedSolution;
+        normalize(solution);
     }
-
-//    private double fillDedication(Integer t, List<DynamicEmployee> employeesWithSkills, DynamicEmployee employee, double availableDedication) {
-//        double newDed = schedule.getDedication(employee.index(), t) + (availableDedication / employeesWithSkills.size());
-//        return newDed <= employee.getMaxDedication() ? newDed : employee.getMaxDedication();
-//    }
-
-//    private boolean employeeHasSkills(Integer t, Integer e) {
-//        return TaskManager.missingSkills(project.getTaskByIndex(t), project.getEmployeeByIndex(e)) == 0;
-//    }
 
     private List<Integer> remainingEmployees() {
         List<Integer> remaining = new ArrayList<>();

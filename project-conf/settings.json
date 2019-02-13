@@ -4,7 +4,7 @@
     "project-conf/dynamic-extended/dynamic_example_new1.json"
   ],
   "algorithms": [
-  	"CMODE"
+  	"CMODESDENormRepairDynamic"
   ],
   "useExtendedIntance": true,
   "useBigArchive": false,

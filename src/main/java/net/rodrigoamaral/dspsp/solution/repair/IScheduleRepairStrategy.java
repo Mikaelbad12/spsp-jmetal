@@ -5,4 +5,5 @@ import org.uma.jmetal.solution.DoubleSolution;
 
 public interface IScheduleRepairStrategy {
     DoubleSolution repair();
+    void repair(DoubleSolution solution);
 }

@@ -10,20 +10,41 @@ import org.uma.jmetal.solution.impl.DefaultDoubleSolution;
 import org.uma.jmetal.util.archive.impl.AbstractBoundedArchive;
 import org.uma.jmetal.util.archive.impl.NonDominatedSolutionListArchive;
 
+import net.rodrigoamaral.dspsp.solution.repair.IScheduleRepairStrategy;
+
 @SuppressWarnings({ "serial" })
 public class CMODEDynamic extends CMODE {
 	
 	private static AbstractBoundedArchive<DoubleSolution> historyArchive;
 	private NonDominatedSolutionListArchive<DoubleSolution> bigArchive;
 	private boolean useHistoryArchive;
+	private boolean evaluateBigArchive;
 
+//	public CMODEDynamic(int maxEvaluations, int subpopulationSize, AbstractBoundedArchive<DoubleSolution> archive, 
+//						DoubleProblem problem, boolean useHistoryArchive) {
+//		super(maxEvaluations, subpopulationSize, archive, problem);
+//		
+//		this.useHistoryArchive = useHistoryArchive;
+//		if(!useHistoryArchive){
+//			historyArchive = archive;
+//		}
+//	}
+	
 	public CMODEDynamic(int maxEvaluations, int subpopulationSize, AbstractBoundedArchive<DoubleSolution> archive, 
-						DoubleProblem problem, boolean useHistoryArchive) {
+						DoubleProblem problem, boolean useHistoryArchive, List<IScheduleRepairStrategy> repairStrategies) {
 		super(maxEvaluations, subpopulationSize, archive, problem);
-		
+
 		this.useHistoryArchive = useHistoryArchive;
 		if(!useHistoryArchive){
 			historyArchive = archive;
+		}
+		
+		if(repairStrategies != null) {
+			for(IScheduleRepairStrategy repairStrategy: repairStrategies) {
+				for(DoubleSolution s: historyArchive.getSolutionList()) {
+					repairStrategy.repair(s);
+				}
+			}
 		}
 	}
 	
@@ -39,11 +60,29 @@ public class CMODEDynamic extends CMODE {
 			historyArchive = archive;
 		}
 	}
+	
+	public CMODEDynamic(int maxEvaluations, int subpopulationSize, AbstractBoundedArchive<DoubleSolution> archive, 
+			DoubleProblem problem, NonDominatedSolutionListArchive<DoubleSolution> bigArchive, 
+			boolean useHistoryArchive, boolean evaluateBigArchive) {
+		super(maxEvaluations, subpopulationSize, archive, problem);
+
+		this.bigArchive = bigArchive;
+		this.useHistoryArchive = useHistoryArchive;
+		if(!useHistoryArchive){
+			historyArchive = archive;
+		}
+		this.evaluateBigArchive = evaluateBigArchive;
+	}
 
 	@Override
 	public void run() {
 		if(useHistoryArchive){
 			for(DoubleSolution ds: historyArchive.getSolutionList()){
+				evaluate(ds);
+			}
+		}
+		if(bigArchive != null && evaluateBigArchive) {
+			for(DoubleSolution ds: bigArchive.getSolutionList()){
 				evaluate(ds);
 			}
 		}
