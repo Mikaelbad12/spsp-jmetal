@@ -296,7 +296,6 @@ public class ExperimentRunner {
                 problem.getProject().isFinished());
     }
 
-	//TODO normalizacao geral dos objetivos 
     /**
      * Executes algorithms for each problem instance.
      *

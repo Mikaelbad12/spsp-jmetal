@@ -37,7 +37,8 @@ public class JMetalDSPSPExtendedAdapter extends JMetalDSPSPAdapter {
     private static final int[] STATIC_OBJECTIVES = {Objective.DURATION.getValue(), Objective.COST.getValue(), 
     												Objective.ROBUSTNESS.getValue(), Objective.SKILL.getValue()}; 
     private static final int[] DYNAMIC_OBJECTIVES = {Objective.DURATION.getValue(), Objective.COST.getValue(), 
-    												Objective.ROBUSTNESS.getValue(), Objective.SKILL.getValue(), Objective.STABILITY.getValue()};
+    												Objective.ROBUSTNESS.getValue(), Objective.SKILL.getValue(), 
+    												Objective.STABILITY.getValue()};
 
     private static final String PROBLEM_NAME = "DSPSPExtended";
 
