@@ -33,23 +33,33 @@ public class Stability{
 			e.printStackTrace();
 		} 
 		
-		Map<String, Map<String, List<String>>> algorithms = new HashMap<>();
+		Map<String, Map<String, Map<String, List<String>>>> algorithms = new HashMap<>();
 		for(String s: accList) {
 			String[] info = s.split(" ");
 			if(algorithms.containsKey(info[0])) {
-				if(algorithms.get(info[0]).containsKey(info[2])) {
-					algorithms.get(info[0]).get(info[2]).add(s);
+				if(algorithms.get(info[0]).containsKey(info[1])) {
+					if(algorithms.get(info[0]).get(info[1]).containsKey(info[2])) {
+						algorithms.get(info[0]).get(info[1]).get(info[2]).add(s);
+					}else {
+						List<String> acc = new ArrayList<>();
+						acc.add(s);
+						algorithms.get(info[0]).get(info[1]).put(info[2], acc);
+					}
 				}else {
+					Map<String, List<String>> exec = new HashMap<>();
 					List<String> acc = new ArrayList<>();
 					acc.add(s);
-					algorithms.get(info[0]).put(info[2], acc);
+					exec.put(info[2], acc);
+					algorithms.get(info[0]).put(info[1], exec);
 				}
 			}else {
+				Map<String, Map<String, List<String>>> instance = new HashMap<>();
 				Map<String, List<String>> exec = new HashMap<>();
 				List<String> acc = new ArrayList<>();
 				acc.add(s);
 				exec.put(info[2], acc);
-				algorithms.put(info[0], exec);
+				instance.put(info[1], exec);
+				algorithms.put(info[0], instance);
 			}
 		}
 		
@@ -65,20 +75,22 @@ public class Stability{
 		};
 		
 		List<String> stabList = new ArrayList<>();
-		for(Map<String, List<String>> alg: algorithms.values()) {
-			for(List<String> exec: alg.values()) {
-				Collections.sort(exec, c);
-				for(int i = 1; i < exec.size(); i++) {
-					String[] currentInfo = exec.get(i).split(" ");
-					String[] previousInfo = exec.get(i-1).split(" ");
-					Double currentAcc = Double.valueOf(currentInfo[4]);
-					Double previousAcc =  Double.valueOf(previousInfo[4]);
-					Double stab = evaluate(previousAcc, currentAcc);
-					String stability = stab.toString();
-					if(stability.length() > 8) {
-						stability = stability.substring(0, 8);
+		for(Map<String, Map<String, List<String>>> alg: algorithms.values()) {
+			for(Map<String, List<String>> instance: alg.values()) {
+				for(List<String> exec: instance.values()) {
+					Collections.sort(exec, c);
+					for(int i = 1; i < exec.size(); i++) {
+						String[] currentInfo = exec.get(i).split(" ");
+						String[] previousInfo = exec.get(i-1).split(" ");
+						Double currentAcc = Double.valueOf(currentInfo[4]);
+						Double previousAcc =  Double.valueOf(previousInfo[4]);
+						Double stab = evaluate(previousAcc, currentAcc);
+						String stability = stab.toString();
+						if(stability.length() > 8) {
+							stability = stability.substring(0, 8);
+						}
+						stabList.add(String.format("%s %s %s %s %s", currentInfo[0], currentInfo[1], currentInfo[2], currentInfo[3], stability));
 					}
-					stabList.add(String.format("%s %s %s %s %s", currentInfo[0], currentInfo[1], currentInfo[2], currentInfo[3], stability));
 				}
 			}
 		}

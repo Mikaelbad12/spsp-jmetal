@@ -33,23 +33,33 @@ public class Accuracy{
 			e.printStackTrace();
 		} 
 		
-		Map<String, Map<String, List<String>>> algorithms = new HashMap<>();
+		Map<String, Map<String, Map<String, List<String>>>> algorithms = new HashMap<>();
 		for(String s: hvList) {
 			String[] info = s.split(" ");
 			if(algorithms.containsKey(info[0])) {
-				if(algorithms.get(info[0]).containsKey(info[2])) {
-					algorithms.get(info[0]).get(info[2]).add(s);
+				if(algorithms.get(info[0]).containsKey(info[1])) {
+					if(algorithms.get(info[0]).get(info[1]).containsKey(info[2])) {
+						algorithms.get(info[0]).get(info[1]).get(info[2]).add(s);
+					}else {
+						List<String> hv = new ArrayList<>();
+						hv.add(s);
+						algorithms.get(info[0]).get(info[1]).put(info[2], hv);
+					}
 				}else {
+					Map<String, List<String>> exec = new HashMap<>();
 					List<String> hv = new ArrayList<>();
 					hv.add(s);
-					algorithms.get(info[0]).put(info[2], hv);
+					exec.put(info[2], hv);
+					algorithms.get(info[0]).put(info[1], exec);
 				}
 			}else {
+				Map<String, Map<String, List<String>>> instance = new HashMap<>();
 				Map<String, List<String>> exec = new HashMap<>();
 				List<String> hv = new ArrayList<>();
 				hv.add(s);
 				exec.put(info[2], hv);
-				algorithms.put(info[0], exec);
+				instance.put(info[1], exec);
+				algorithms.put(info[0], instance);
 			}
 		}
 		
@@ -63,23 +73,27 @@ public class Accuracy{
 			}
 			
 		};
+		
+		//TODO tirar duvida com Andre se é em relação a todas as execuções ou não
 		List<String> accList = new ArrayList<>();
-		for(Map<String, List<String>> alg: algorithms.values()) {
-			for(List<String> exec: alg.values()) {
-				double maxHv = Double.MIN_VALUE;
-				Collections.sort(exec, c);
-				for(String infoHv: exec) {
-					String[] info = infoHv.split(" ");
-					double hv = Double.valueOf(info[4]);
-					if(hv > maxHv) {
-						maxHv = hv;
+		for(Map<String, Map<String, List<String>>> alg: algorithms.values()) {
+			for(Map<String, List<String>> instance: alg.values()) {
+				for(List<String> exec: instance.values()) {
+					double maxHv = Double.MIN_VALUE;
+					Collections.sort(exec, c);
+					for(String infoHv: exec) {
+						String[] info = infoHv.split(" ");
+						double hv = Double.valueOf(info[4]);
+						if(hv > maxHv) {
+							maxHv = hv;
+						}
+						Double acc = evaluate(hv, maxHv);
+						String accuracy = acc.toString();
+						if(accuracy.length() > 8) {
+							accuracy = accuracy.substring(0, 8);
+						}
+						accList.add(String.format("%s %s %s %s %s", info[0], info[1], info[2], info[3], accuracy));
 					}
-					Double acc = evaluate(hv, maxHv);
-					String accuracy = acc.toString();
-					if(accuracy.length() > 8) {
-						accuracy = accuracy.substring(0, 8);
-					}
-					accList.add(String.format("%s %s %s %s %s", info[0], info[1], info[2], info[3], accuracy));
 				}
 			}
 		}

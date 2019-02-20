@@ -9,20 +9,54 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class NormalizeObjectives {
 
 	public static void main(String[] args) throws IOException {
-		normalize();
+		normalize("st10_dt10_se5_de1_sk4-5", Arrays.asList("CMODESDENormDynamic", "CMODESDENormRepairDynamic", 
+															"CMODESDENormBigDynamic", "CMODESDENormBigReDynamic",
+															"CMODESDENormFullDynamic", "CMODESDENormFullReDynamic"));
 	}
 	
-	private static void normalize() throws IOException{
+	private static void normalize(String filterInstance, List<String> filterAlgorithms) throws IOException{
+		Predicate<File> instancePredicate = new Predicate<File>() {
+
+			@Override
+			public boolean test(File file) {
+				if(filterInstance == null || filterInstance.trim().isEmpty()) {
+					return true;
+				}
+				return file.getName().contains(filterInstance.toUpperCase());
+			}
+		};
+		
+		Predicate<File> algorithmPredicate = new Predicate<File>() {
+
+			@Override
+			public boolean test(File file) {
+				if(filterAlgorithms == null || filterAlgorithms.isEmpty()) {
+					return true;
+				}
+				
+				for(String algorithm: filterAlgorithms) {
+					if(file.getName().contains(algorithm.toUpperCase()+"-")) {
+						return true;
+					}
+				}
+				return false;
+			}
+		};
+		
 		List<File> files = Files.walk(Paths.get("results"))
 							.filter(Files::isRegularFile)
 							.map(Path::toFile)
 							.filter(file -> file.getName().startsWith("OBJ"))
+							.filter(instancePredicate)
+							.filter(algorithmPredicate)
 							.collect(Collectors.toList());
 		
 		double[] maxValue = new double[]{Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, 

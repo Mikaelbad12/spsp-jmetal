@@ -9,7 +9,7 @@ from hypervolume import hypervolume as hv
 BASE_DIR = "results"
 #precisa http://lopez-ibanez.eu/hypervolume para funcionar
 
-def list_result_files(result_type="NOB", base_dir=BASE_DIR):
+def list_result_files(result_type="NOBJ", base_dir=BASE_DIR):
     path_pattern = "../{}/**/{}/*.csv".format(BASE_DIR, result_type)
     return glob(path_pattern, recursive=True)
 

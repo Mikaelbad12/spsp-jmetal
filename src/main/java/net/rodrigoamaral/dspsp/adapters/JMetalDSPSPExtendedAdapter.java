@@ -11,13 +11,6 @@ import net.rodrigoamaral.dspsp.project.DynamicExtendedProject;
 import net.rodrigoamaral.dspsp.project.DynamicProject;
 import net.rodrigoamaral.dspsp.solution.DedicationMatrix;
 
-/**
- *
- * Adapts Project interface to a JMetal AbstractDoubleProblem
- * that implements ConstrainedProble&lt;DoubleSolution&gt;. {@link JMetalDSPSPExtendedAdapter}
- * must provide all the methods needed for these interfaces.
- *
- */
 public class JMetalDSPSPExtendedAdapter extends JMetalDSPSPAdapter {
 	
 	private enum Objective {

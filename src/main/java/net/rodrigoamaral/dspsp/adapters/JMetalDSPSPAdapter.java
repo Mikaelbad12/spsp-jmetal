@@ -173,7 +173,7 @@ public class JMetalDSPSPAdapter {
 
                 solution.setObjective(getObjectiveDurationValue(), efficiency.duration);
                 solution.setObjective(getObjectiveCostValue(), efficiency.cost);
-                solution.setObjective(getObjectiveRobustnessValue(), robustness);
+                solution.setObjective(getObjectiveRobustnessValue(), Double.isNaN(robustness) ? 0 : robustness);
 
                 evaluateExtraObjectives(solution, dm, efficiency, robustness);
                 

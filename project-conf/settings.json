@@ -4,10 +4,10 @@
     "project-conf/dynamic-extended/dynamic_example_new1.json"
   ],
   "algorithms": [
-  	"CMODESDENormRepairDynamic"
+  	"CMODESDENormFullReDynamic"
   ],
   "useExtendedIntance": true,
-  "useBigArchive": false,
+  "useBigArchive": true,
   "objectiveEvaluations": 12000,
   "populationSize": 100,
   "subpopulationSize": 20,

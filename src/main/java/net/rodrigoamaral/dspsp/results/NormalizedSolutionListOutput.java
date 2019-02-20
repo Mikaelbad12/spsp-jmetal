@@ -15,18 +15,24 @@ import net.rodrigoamaral.logging.SPSPLogger;
  * Outputs normalized objective values to file
  */
 public class NormalizedSolutionListOutput {
+	
     private final String objectivesFilename;
     private final FileOutputContext context;
+    private int numberOfObjectives;
 
     public NormalizedSolutionListOutput(String objectivesFilename) {
         this.objectivesFilename = objectivesFilename;
         context = new DefaultFileOutputContext(this.objectivesFilename.replace("OBJ", "NOB"));
     }
+    
+    public NormalizedSolutionListOutput setNumberOfObjectives(int numberOfObjectives) {
+    	this.numberOfObjectives = numberOfObjectives;
+    	return this;
+    }
 
     public String getObjectivesFilename() {
         return objectivesFilename;
     }
-
 
     // REFACTOR: Customize separator
     public void print() throws IOException {
@@ -65,7 +71,11 @@ public class NormalizedSolutionListOutput {
 
     private void writeDummyFile() throws IOException {
         BufferedWriter bufferedWriter = context.getFileWriter();
-        bufferedWriter.write("1.099999 1.099999 1.099999 1.099999");
+        String dummyResult = "";
+        for(int i = 0; i < numberOfObjectives; i++) {
+        	dummyResult += "1.099999 ";
+        }
+        bufferedWriter.write(dummyResult.trim());
         bufferedWriter.close();
     }
 }

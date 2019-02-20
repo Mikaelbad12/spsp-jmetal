@@ -271,7 +271,6 @@ public class ExperimentRunner {
 	        }
 		}
 
-
         ((DynamicExtendedProject)project).update(events, lastSchedule);
 
         DSPSProblem problem = loadProblemInstance(project);
@@ -281,7 +280,7 @@ public class ExperimentRunner {
         // First rescheduling doesn't take history
         if ((reschedulings > 1) && (assembler.getAlgorithmID().toUpperCase().endsWith("DYNAMIC"))) {
         	if(useBigArchive()){//big archive does not use internal history
-        		algorithm = assembler.assemble(problem, bigArchive, false, false);
+        		algorithm = assembler.assemble(problem, bigArchive, true, true);
         	}else{
         		algorithm = assembler.assemble(problem, true, repairStrategies);
         	}

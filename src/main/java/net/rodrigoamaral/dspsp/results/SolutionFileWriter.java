@@ -133,6 +133,7 @@ public class SolutionFileWriter {
 
         try {
             new NormalizedSolutionListOutput(getObjectivesFilename())
+            		.setNumberOfObjectives(population.get(0).getNumberOfObjectives())
                     .print();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
