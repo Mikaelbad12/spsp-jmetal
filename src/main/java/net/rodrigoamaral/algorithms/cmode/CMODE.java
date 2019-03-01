@@ -211,7 +211,8 @@ public class CMODE implements Algorithm {
 			double value2 = individual2.getVariableValue(i);
 			double value3 = individual3.getVariableValue(i);
 			
-			mutant.setVariableValue(i, value + mutationFactor * (value2 - value3));
+			double mutantValue = value + mutationFactor * (value2 - value3);
+			mutant.setVariableValue(i, getMutantValueInsideBound(mutantValue, i));
 		}
 		return mutant;
 	}
@@ -305,11 +306,22 @@ public class CMODE implements Algorithm {
 			double value2 = individual2.getVariableValue(i);
 			double archiveValue = individualArchive.getVariableValue(i);
 			
-			mutant.setVariableValue(i, value + individualMutationFactorM * (bestValue - value)
+			double mutantValue = value + individualMutationFactorM * (bestValue - value)
 											+ individualMutationFactorM * (value1 - value2)
-											+ individualMutationFactorM * (archiveValue - value));
+											+ individualMutationFactorM * (archiveValue - value);
+			mutant.setVariableValue(i, getMutantValueInsideBound(mutantValue, i));
 		}
 		return mutant;
+	}
+	
+	protected double getMutantValueInsideBound(double mutantValue, int index) {
+		if(mutantValue > problem.getUpperBound(index)) {
+			return problem.getUpperBound(index);
+		}else if(mutantValue < problem.getLowerBound(index)) {
+			return problem.getLowerBound(index);
+		}else {
+			return mutantValue;
+		}
 	}
 
 	protected boolean isStoppingConditionReached(){

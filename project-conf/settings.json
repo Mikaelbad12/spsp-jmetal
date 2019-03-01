@@ -1,14 +1,19 @@
 {
-  "numberOfRuns": 1,
+  "numberOfRuns": 30,
   "instanceFiles": [
-    "project-conf/dynamic-extended/dynamic_example_new1.json"
+    "project-conf/dynamic-extended/dynamic_example_new1.json",
+    "project-conf/dynamic-extended/dynamic_example_new6.json",
+    "project-conf/dynamic-extended/dynamic_example_new10.json",
+	"project-conf/dynamic-extended/dynamic_example_new15.json"
   ],
   "algorithms": [
-  	"CMODESDENormFullReDynamic"
+  	"CMODE",
+  	"CMODESDE",
+  	"CMODESDENorm"
   ],
   "useExtendedIntance": true,
-  "useBigArchive": true,
-  "objectiveEvaluations": 12000,
+  "useBigArchive": false,
+  "objectiveEvaluations": 20000,
   "populationSize": 100,
   "subpopulationSize": 20,
   "repairedSolutions": 0.3,

@@ -135,8 +135,9 @@ public class CMODEDynamic extends CMODE {
 			double value3 = individual3.getVariableValue(i);
 			double archiveValue = individualArchive.getVariableValue(i);
 			
-			mutant.setVariableValue(i, value + mutationFactor * (value2 - value3)
-										+ mutationFactor * (archiveValue - value));
+			double mutantValue = value + mutationFactor * (value2 - value3)
+										+ mutationFactor * (archiveValue - value);
+			mutant.setVariableValue(i, getMutantValueInsideBound(mutantValue, i));
 		}
 		return mutant;
 	}

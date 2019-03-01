@@ -296,7 +296,6 @@ public class DynamicProject {
 
             double partialDuration = Double.POSITIVE_INFINITY;
 
-
             for (DynamicTask localTask : localActiveTasks) {
                 EffortParameters ep = TaskManager.getEffortProperties(localTask, availableEmployees_, normalizedSchedule);
                 efforts.put(localTask.index(), ep);
