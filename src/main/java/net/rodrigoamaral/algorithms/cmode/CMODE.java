@@ -314,6 +314,7 @@ public class CMODE implements Algorithm {
 		return mutant;
 	}
 	
+	// verificar se tirando o absoluto e fazendo o mod pelo upper caso esteja fora da fronteira
 	protected double getMutantValueInsideBound(double mutantValue, int index) {
 		if(mutantValue > problem.getUpperBound(index)) {
 			return problem.getUpperBound(index);
