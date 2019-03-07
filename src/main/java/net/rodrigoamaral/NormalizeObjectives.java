@@ -10,16 +10,83 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class NormalizeObjectives {
 
 	public static void main(String[] args) throws IOException {
-		normalize("st10_dt10_se5_de1_sk4-5", Arrays.asList("CMODESDENormDynamic", "CMODESDENormRepairDynamic", 
-															"CMODESDENormBigDynamic", "CMODESDENormBigReDynamic",
-															"CMODESDENormFullDynamic", "CMODESDENormFullReDynamic"));
+		removedLastArchiveIfAllValuesZero();
+		normalize("sT30_dT10_sE15_dE1_SK4-5", Arrays.asList("CMODE", "CMODESDE", 
+															"CMODESDENorm"));
+	}
+	
+	private static void removedLastArchiveIfAllValuesZero() throws IOException{
+		List<File> files = Files.walk(Paths.get("results"))
+				.filter(Files::isRegularFile)
+				.map(Path::toFile)
+				.filter(file -> file.getName().startsWith("OBJ"))
+				.collect(Collectors.toList());
+		
+		Map<String, List<File>> map = new HashMap<>();
+		for(File f: files){
+			String key = f.getName().substring(0, f.getName().lastIndexOf("-"));
+			if(map.containsKey(key)){
+				map.get(key).add(f);
+			}else{
+				List<File> aux = new ArrayList<>();
+				aux.add(f);
+				map.put(key, aux);
+			}
+		}
+		
+		Comparator<File> c = new Comparator<File>() {
+
+			@Override
+			public int compare(File o1, File o2) {
+				return Integer.valueOf(o2.getName().substring(
+							o2.getName().lastIndexOf("-")+1, 
+							o2.getName().lastIndexOf(".")))
+						.compareTo(Integer.valueOf(o1.getName().substring(
+									o1.getName().lastIndexOf("-")+1, 
+									o1.getName().lastIndexOf("."))));
+			}
+			
+		};
+		
+		List<File> toRemove = new ArrayList<>();
+		for(String key: map.keySet()){
+			List<File> list = map.get(key);
+			Collections.sort(list, c);
+			for(int i = 0; i < list.size(); i++){
+				BufferedReader br = new BufferedReader(new FileReader(list.get(i)));
+				List<String> lines = br.lines().collect(Collectors.toList());
+				br.close();
+				boolean onlyZeros = true;
+				inside:
+				for(String line: lines){
+					String[] objs = line.split(" ");
+					for(String o: objs){
+						if(!o.equals("0.0") && !o.equals("-0.0")){
+							onlyZeros = false;
+							break inside;
+						}
+					}
+				}
+				if(!onlyZeros){
+					break;
+				}else{
+					toRemove.add(list.get(i));
+				}
+			}
+		}
+		
+		toRemove.forEach(f -> f.delete());
 	}
 	
 	private static void normalize(String filterInstance, List<String> filterAlgorithms) throws IOException{

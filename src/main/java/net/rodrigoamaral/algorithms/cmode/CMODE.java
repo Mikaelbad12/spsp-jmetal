@@ -314,17 +314,14 @@ public class CMODE implements Algorithm {
 		return mutant;
 	}
 	
-	// verificar se tirando o absoluto e fazendo o mod pelo upper caso esteja fora da fronteira
 	protected double getMutantValueInsideBound(double mutantValue, int index) {
-		if(mutantValue > problem.getUpperBound(index)) {
-			return problem.getUpperBound(index);
-		}else if(mutantValue < problem.getLowerBound(index)) {
-			return problem.getLowerBound(index);
-		}else {
-			return mutantValue;
+		if(mutantValue > problem.getUpperBound(index) || 
+			mutantValue < problem.getLowerBound(index)){
+			return Math.abs(mutantValue) % problem.getUpperBound(index);
 		}
+		return mutantValue;
 	}
-
+	
 	protected boolean isStoppingConditionReached(){
 		return evaluations >= maxEvaluations;
 	}
