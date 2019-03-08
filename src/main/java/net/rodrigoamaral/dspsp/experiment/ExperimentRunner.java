@@ -54,8 +54,20 @@ public class ExperimentRunner {
     	return experimentSettings.getUseExtendedIntance();
     }
     
-    private boolean useBigArchive(){
-    	return experimentSettings.getUseBigArchive();
+    private boolean useExternalArchive(){
+    	return experimentSettings.getUseExternalArchive();
+    }
+    
+    private boolean useHistoryArchive(){
+    	return experimentSettings.getUseHistoryArchive();
+    }
+    
+    private boolean evaluateExternalArchive(){
+    	return experimentSettings.getEvaluateExternalArchive();
+    }
+    
+    private boolean useRapeirStrategies(){
+    	return experimentSettings.getUseRapairStrategies();
     }
     
     private DSPSProblem loadProblemInstance(final String instanceFile) {
@@ -119,10 +131,9 @@ public class ExperimentRunner {
         	
         	DoubleSolution currentSchedule = initialSchedule;
         	
-        	NonDominatedSolutionListArchive<DoubleSolution> bigArchive = null;
-        	if(useBigArchive()){
-        		bigArchive = new NonDominatedSolutionListArchive<>();
-//        		bigArchive.add(currentSchedule);
+        	NonDominatedSolutionListArchive<DoubleSolution> externalArchive = null;
+        	if(useExternalArchive()){
+        		externalArchive = new NonDominatedSolutionListArchive<>();
         	}
         	
         	for(List<DynamicEvent> eventList: reschedulingPoints){
@@ -134,7 +145,7 @@ public class ExperimentRunner {
         		
         		SPSPLogger.rescheduling(reschedulings, eventList, run, experimentSettings.getNumberOfRuns());
         		
-	            SchedulingResult result = reschedule(project, eventList, currentSchedule, assembler, bigArchive);
+	            SchedulingResult result = reschedule(project, eventList, currentSchedule, assembler, externalArchive);
 	
 	            history.put(reschedulings, result.getSchedules());
 	            
@@ -151,8 +162,8 @@ public class ExperimentRunner {
 	                    .write();
 	
 	            currentSchedule = new DecisionMaker(result.getSchedules(), comparisonMatrix).chooseNewSchedule();
-	            if(useBigArchive() && currentSchedule != null){
-	            	bigArchive.add(currentSchedule);
+	            if(useExternalArchive() && currentSchedule != null){
+	            	externalArchive.add(currentSchedule);
 	            }
         	}
         }else{
@@ -253,22 +264,25 @@ public class ExperimentRunner {
 	
 	private SchedulingResult reschedule(DynamicProject project, List<DynamicEvent> events, DoubleSolution lastSchedule, 
 										AlgorithmAssembler assembler, 
-										NonDominatedSolutionListArchive<DoubleSolution> bigArchive) {
+										NonDominatedSolutionListArchive<DoubleSolution> externalArchive) {
+		
 		List<IScheduleRepairStrategy> repairStrategies = new ArrayList<>();
-		for(DynamicEvent event : events){
-	        switch (event.getType()) {
-	            case EMPLOYEE_LEAVE:
-	                repairStrategies.add(new EmployeeLeaveStrategy(project, (DynamicEmployee) event.getSubject()));
-	                break;
-	            case EMPLOYEE_RETURN:
-	                repairStrategies.add(new EmployeeReturnStrategy(project, (DynamicEmployee) event.getSubject()));
-	                break;
-	            case NEW_EMPLOYEE_ARRIVE:
-	                repairStrategies.add(new NewEmployeeStrategy(project, (DynamicEmployee) event.getSubject()));
-	                break;
-	            default:
-	                break;
-	        }
+		if(useRapeirStrategies()) {
+			for(DynamicEvent event : events){
+		        switch (event.getType()) {
+		            case EMPLOYEE_LEAVE:
+		                repairStrategies.add(new EmployeeLeaveStrategy(project, (DynamicEmployee) event.getSubject()));
+		                break;
+		            case EMPLOYEE_RETURN:
+		                repairStrategies.add(new EmployeeReturnStrategy(project, (DynamicEmployee) event.getSubject()));
+		                break;
+		            case NEW_EMPLOYEE_ARRIVE:
+		                repairStrategies.add(new NewEmployeeStrategy(project, (DynamicEmployee) event.getSubject()));
+		                break;
+		            default:
+		                break;
+		        }
+			}
 		}
 
         ((DynamicExtendedProject)project).update(events, lastSchedule);
@@ -279,11 +293,7 @@ public class ExperimentRunner {
 
         // First rescheduling doesn't take history
         if ((reschedulings > 1) && (assembler.getAlgorithmID().toUpperCase().endsWith("DYNAMIC"))) {
-        	if(useBigArchive()){//big archive does not use internal history
-        		algorithm = assembler.assemble(problem, bigArchive, true, true);
-        	}else{
-        		algorithm = assembler.assemble(problem, true, repairStrategies);
-        	}
+    		algorithm = assembler.assemble(problem, externalArchive, useHistoryArchive(), evaluateExternalArchive(), repairStrategies);
         } else {
     		algorithm = assembler.assemble(problem, false);
         }

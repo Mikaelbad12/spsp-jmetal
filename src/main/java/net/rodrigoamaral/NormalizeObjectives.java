@@ -22,8 +22,9 @@ public class NormalizeObjectives {
 
 	public static void main(String[] args) throws IOException {
 		removedLastArchiveIfAllValuesZero();
-		normalize("sT30_dT10_sE15_dE1_SK4-5", Arrays.asList("CMODE", "CMODESDE", 
-															"CMODESDENorm"));
+		normalize("sT10_dT10_sE5_dE1_SK4-5", Arrays.asList("CMODESDEExternalDYNAMIC", "CMODESDEExternalReDYNAMIC", 
+															"CMODESDEDYNAMIC", "CMODESDEFullDYNAMIC",
+															"CMODESDEFullReDYNAMIC", "CMODESDERepairDYNAMIC"));
 	}
 	
 	private static void removedLastArchiveIfAllValuesZero() throws IOException{

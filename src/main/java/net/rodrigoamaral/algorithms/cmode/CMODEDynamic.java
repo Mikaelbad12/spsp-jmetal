@@ -16,24 +16,17 @@ import net.rodrigoamaral.dspsp.solution.repair.IScheduleRepairStrategy;
 public class CMODEDynamic extends CMODE {
 	
 	private static AbstractBoundedArchive<DoubleSolution> historyArchive;
-	private NonDominatedSolutionListArchive<DoubleSolution> bigArchive;
+	private NonDominatedSolutionListArchive<DoubleSolution> externalArchive;
 	private boolean useHistoryArchive;
-	private boolean evaluateBigArchive;
+	private boolean evaluateExternalArchive;
 
-//	public CMODEDynamic(int maxEvaluations, int subpopulationSize, AbstractBoundedArchive<DoubleSolution> archive, 
-//						DoubleProblem problem, boolean useHistoryArchive) {
-//		super(maxEvaluations, subpopulationSize, archive, problem);
-//		
-//		this.useHistoryArchive = useHistoryArchive;
-//		if(!useHistoryArchive){
-//			historyArchive = archive;
-//		}
-//	}
-	
 	public CMODEDynamic(int maxEvaluations, int subpopulationSize, AbstractBoundedArchive<DoubleSolution> archive, 
-						DoubleProblem problem, boolean useHistoryArchive, List<IScheduleRepairStrategy> repairStrategies) {
+			DoubleProblem problem, NonDominatedSolutionListArchive<DoubleSolution> externalArchive, 
+			boolean useHistoryArchive, boolean evaluateExternalArchive, List<IScheduleRepairStrategy> repairStrategies) {
 		super(maxEvaluations, subpopulationSize, archive, problem);
 
+		this.externalArchive = externalArchive;
+		this.evaluateExternalArchive = evaluateExternalArchive;
 		this.useHistoryArchive = useHistoryArchive;
 		if(!useHistoryArchive){
 			historyArchive = archive;
@@ -47,32 +40,6 @@ public class CMODEDynamic extends CMODE {
 			}
 		}
 	}
-	
-	public CMODEDynamic(int maxEvaluations, int subpopulationSize, AbstractBoundedArchive<DoubleSolution> archive, 
-						DoubleProblem problem, NonDominatedSolutionListArchive<DoubleSolution> bigArchive, 
-						boolean useHistoryArchive) {
-		super(maxEvaluations, subpopulationSize, archive, problem);
-
-		this.bigArchive = bigArchive;
-		this.useHistoryArchive = useHistoryArchive;
-//		historyArchive = null;
-		if(!useHistoryArchive){
-			historyArchive = archive;
-		}
-	}
-	
-	public CMODEDynamic(int maxEvaluations, int subpopulationSize, AbstractBoundedArchive<DoubleSolution> archive, 
-			DoubleProblem problem, NonDominatedSolutionListArchive<DoubleSolution> bigArchive, 
-			boolean useHistoryArchive, boolean evaluateBigArchive) {
-		super(maxEvaluations, subpopulationSize, archive, problem);
-
-		this.bigArchive = bigArchive;
-		this.useHistoryArchive = useHistoryArchive;
-		if(!useHistoryArchive){
-			historyArchive = archive;
-		}
-		this.evaluateBigArchive = evaluateBigArchive;
-	}
 
 	@Override
 	public void run() {
@@ -81,8 +48,8 @@ public class CMODEDynamic extends CMODE {
 				evaluate(ds);
 			}
 		}
-		if(bigArchive != null && evaluateBigArchive) {
-			for(DoubleSolution ds: bigArchive.getSolutionList()){
+		if(externalArchive != null && evaluateExternalArchive) {
+			for(DoubleSolution ds: externalArchive.getSolutionList()){
 				evaluate(ds);
 			}
 		}
@@ -92,7 +59,7 @@ public class CMODEDynamic extends CMODE {
 	
 	@Override
 	protected List<DoubleSolution> executeDEforArchive() {
-		if(bigArchive == null || bigArchive.size() == 0){
+		if(externalArchive == null || externalArchive.size() == 0){
 			return super.executeDEforArchive();
 		}
 		
@@ -114,7 +81,7 @@ public class CMODEDynamic extends CMODE {
 				x3 = random.nextInt(getArchive().size());
 			}while(x2 == x3 || i == x3);
 			DoubleSolution mutantVector = generateMutantVectorBigArchive(s, getArchive().get(x2), getArchive().get(x3), 
-																		bigArchive.get(random.nextInt(bigArchive.size())),
+																		externalArchive.get(random.nextInt(externalArchive.size())),
 																		mutationFactor);
 			DoubleSolution trialVector = generateTrialVector(s, mutantVector, crossoverFactor);
 

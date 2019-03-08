@@ -24,7 +24,10 @@ public class ExperimentSettings {
     private List<String> dynamicStrategies;
     private Boolean useExtendedIntance = Boolean.FALSE;
     private Integer subpopulationSize;
-    private Boolean useBigArchive = Boolean.FALSE;
+    private Boolean useExternalArchive = Boolean.FALSE;
+    private Boolean useHistoryArchive = Boolean.FALSE;
+    private Boolean evaluateExternalArchive = Boolean.FALSE;
+    private Boolean useRapairStrategies = Boolean.FALSE;
 
     public Integer getNumberOfRuns() {
         return numberOfRuns;
@@ -122,12 +125,36 @@ public class ExperimentSettings {
     	this.subpopulationSize = subpopulationSize;
     }
     
-    public Boolean getUseBigArchive() {
-    	return useBigArchive;
+    public Boolean getUseExternalArchive() {
+    	return useExternalArchive;
     }
     
-    public void setUseBigArchive(Boolean useBigArchive) {
-    	this.useBigArchive = useBigArchive;
+    public void setUseBigArchive(Boolean useExternalArchive) {
+    	this.useExternalArchive = useExternalArchive;
+    }
+    
+    public Boolean getUseHistoryArchive() {
+    	return useHistoryArchive;
+    }
+    
+    public void setUseHistoryArchive(Boolean useHistoryArchive) {
+    	this.useHistoryArchive = useHistoryArchive;
+    }
+    
+    public Boolean getEvaluateExternalArchive() {
+    	return evaluateExternalArchive;
+    }
+    
+    public void setEvaluateExternalArchive(Boolean evaluateExternalArchive) {
+    	this.evaluateExternalArchive = evaluateExternalArchive;
+    }
+    
+    public Boolean getUseRapairStrategies() {
+    	return useRapairStrategies;
+    }
+    
+    public void setUseRapairStrategies(Boolean useRapairStrategies) {
+    	this.useRapairStrategies = useRapairStrategies;
     }
 
     @Override

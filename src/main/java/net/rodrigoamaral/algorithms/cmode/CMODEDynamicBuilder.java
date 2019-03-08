@@ -13,17 +13,17 @@ import net.rodrigoamaral.jmetal.util.archive.impl.SPEA2DensityArchive;
 
 public class CMODEDynamicBuilder extends CMODEBuilder {
 
-	private NonDominatedSolutionListArchive<DoubleSolution> bigArchive;
+	private NonDominatedSolutionListArchive<DoubleSolution> externalArchive;
 	private boolean useHistoryArchive;
-	private boolean evaluateBigArchive;
+	private boolean evaluateExternalArchive;
 	private List<IScheduleRepairStrategy> repairStrategies;
 	
     public CMODEDynamicBuilder(DoubleProblem problem) {
         super(problem);
     }
     
-    public CMODEDynamicBuilder setBigArchive(NonDominatedSolutionListArchive<DoubleSolution> bigArchive) {
-    	this.bigArchive = bigArchive;
+    public CMODEDynamicBuilder setExternalArchive(NonDominatedSolutionListArchive<DoubleSolution> externalArchive) {
+    	this.externalArchive = externalArchive;
         return this;
     }
     
@@ -32,8 +32,8 @@ public class CMODEDynamicBuilder extends CMODEBuilder {
         return this;
     }
     
-    public CMODEDynamicBuilder setEvaluateBigArchive(boolean evaluateBigArchive) {
-    	this.evaluateBigArchive = evaluateBigArchive;
+    public CMODEDynamicBuilder setEvaluateExternalArchive(boolean evaluateExternalArchive) {
+    	this.evaluateExternalArchive = evaluateExternalArchive;
         return this;
     }
     
@@ -43,37 +43,23 @@ public class CMODEDynamicBuilder extends CMODEBuilder {
     }
     
     public CMODE build() {
-    	if(bigArchive == null){
-    		return new CMODEDynamic(maxEvaluations, subpopulationSize, archive, problem, useHistoryArchive, repairStrategies);
-    	}
-    	return new CMODEDynamic(maxEvaluations, subpopulationSize, archive, problem, bigArchive, useHistoryArchive, evaluateBigArchive);
+    	return new CMODEDynamic(maxEvaluations, subpopulationSize, archive, problem, externalArchive, 
+    							useHistoryArchive, evaluateExternalArchive, repairStrategies);
     }
     
     public CMODE buildDefault() {
-    	if(bigArchive == null){
-    		return new CMODEDynamic(maxEvaluations, subpopulationSize, new SPEA2DensityArchive<>(archiveSize), 
-    								problem, useHistoryArchive, repairStrategies);
-    	}
     	return new CMODEBigDynamic(maxEvaluations, subpopulationSize, new SPEA2DensityArchive<>(archiveSize), problem, 
-    							   bigArchive, useHistoryArchive, evaluateBigArchive);
+    							   externalArchive, useHistoryArchive, evaluateExternalArchive, repairStrategies);
     }
     
     public CMODE buildSDE() {
-    	if(bigArchive == null){
-    		return new CMODESDEDynamic(maxEvaluations, subpopulationSize, new SDEArchive<>(archiveSize), problem, 
-    									useHistoryArchive, repairStrategies);
-    	}
     	return new CMODESDEBigDynamic(maxEvaluations, subpopulationSize, new SDEArchive<>(archiveSize), problem, 
-    								  bigArchive, useHistoryArchive, evaluateBigArchive);
+    								  externalArchive, useHistoryArchive, evaluateExternalArchive, repairStrategies);
     }
     
     public CMODE buildSDENorm() {
-    	if(bigArchive == null){
-    		return new CMODESDENormDynamic(maxEvaluations, subpopulationSize, new SDEArchive<>(archiveSize, true), 
-    										problem, useHistoryArchive, repairStrategies);
-    	}
     	return new CMODESDENormBigDynamic(maxEvaluations, subpopulationSize, new SDEArchive<>(archiveSize, true), 
-    									  problem, bigArchive, useHistoryArchive, evaluateBigArchive);
+    									  problem, externalArchive, useHistoryArchive, evaluateExternalArchive, repairStrategies);
     }
     
     @SuppressWarnings("serial")
@@ -81,16 +67,9 @@ public class CMODEDynamicBuilder extends CMODEBuilder {
 
     	public CMODEBigDynamic(int maxEvaluations, int subpopulationSize, 
 				AbstractBoundedArchive<DoubleSolution> archive,
-				DoubleProblem problem, NonDominatedSolutionListArchive<DoubleSolution> bigArchive,
-				boolean useHistoryArchive) {
-			super(maxEvaluations, subpopulationSize, archive, problem, bigArchive, useHistoryArchive);
-		}
-    	
-    	public CMODEBigDynamic(int maxEvaluations, int subpopulationSize, 
-				AbstractBoundedArchive<DoubleSolution> archive,
-				DoubleProblem problem, NonDominatedSolutionListArchive<DoubleSolution> bigArchive,
-				boolean useHistoryArchive, boolean evaluateBigArchive) {
-			super(maxEvaluations, subpopulationSize, archive, problem, bigArchive, useHistoryArchive, evaluateBigArchive);
+				DoubleProblem problem, NonDominatedSolutionListArchive<DoubleSolution> externalArchive,
+				boolean useHistoryArchive, boolean evaluateExternalArchive, List<IScheduleRepairStrategy> repairStrategies) {
+			super(maxEvaluations, subpopulationSize, archive, problem, externalArchive, useHistoryArchive, evaluateExternalArchive, repairStrategies);
 		}
     	
     }
@@ -100,9 +79,10 @@ public class CMODEDynamicBuilder extends CMODEBuilder {
 
 		public CMODESDEDynamic(int maxEvaluations, int subpopulationSize, 
 								AbstractBoundedArchive<DoubleSolution> archive,
-								DoubleProblem problem, boolean useHistoryArchive, 
+								DoubleProblem problem, NonDominatedSolutionListArchive<DoubleSolution> externalArchive,
+								boolean useHistoryArchive, boolean evaluateExternalArchive,
 								List<IScheduleRepairStrategy> repairStrategies) {
-			super(maxEvaluations, subpopulationSize, archive, problem, useHistoryArchive, repairStrategies);
+			super(maxEvaluations, subpopulationSize, archive, problem, externalArchive, useHistoryArchive, evaluateExternalArchive, repairStrategies);
 		}
     	
     }
@@ -112,16 +92,10 @@ public class CMODEDynamicBuilder extends CMODEBuilder {
 
 		public CMODESDEBigDynamic(int maxEvaluations, int subpopulationSize, 
 				AbstractBoundedArchive<DoubleSolution> archive,
-				DoubleProblem problem, NonDominatedSolutionListArchive<DoubleSolution> bigArchive,
-				boolean useHistoryArchive) {
-			super(maxEvaluations, subpopulationSize, archive, problem, bigArchive, useHistoryArchive);
-		}
-		
-		public CMODESDEBigDynamic(int maxEvaluations, int subpopulationSize, 
-				AbstractBoundedArchive<DoubleSolution> archive,
-				DoubleProblem problem, NonDominatedSolutionListArchive<DoubleSolution> bigArchive,
-				boolean useHistoryArchive, boolean evaluateBigArchive) {
-			super(maxEvaluations, subpopulationSize, archive, problem, bigArchive, useHistoryArchive, evaluateBigArchive);
+				DoubleProblem problem, NonDominatedSolutionListArchive<DoubleSolution> externalArchive,
+				boolean useHistoryArchive, boolean evaluateExternalArchive,
+				List<IScheduleRepairStrategy> repairStrategies) {
+			super(maxEvaluations, subpopulationSize, archive, problem, externalArchive, useHistoryArchive, evaluateExternalArchive, repairStrategies);
 		}
     	
     }
@@ -131,9 +105,10 @@ public class CMODEDynamicBuilder extends CMODEBuilder {
 
 		public CMODESDENormDynamic(int maxEvaluations, int subpopulationSize, 
 									AbstractBoundedArchive<DoubleSolution> archive,
-									DoubleProblem problem, boolean useHistoryArchive, 
+									DoubleProblem problem, NonDominatedSolutionListArchive<DoubleSolution> externalArchive,
+									boolean useHistoryArchive, boolean evaluateExternalArchive, 
 									List<IScheduleRepairStrategy> repairStrategies) {
-			super(maxEvaluations, subpopulationSize, archive, problem, useHistoryArchive, repairStrategies);
+			super(maxEvaluations, subpopulationSize, archive, problem, externalArchive, useHistoryArchive, evaluateExternalArchive, repairStrategies);
 		}
 		
     }
@@ -143,16 +118,10 @@ public class CMODEDynamicBuilder extends CMODEBuilder {
 
 		public CMODESDENormBigDynamic(int maxEvaluations, int subpopulationSize, 
 				AbstractBoundedArchive<DoubleSolution> archive,
-				DoubleProblem problem, NonDominatedSolutionListArchive<DoubleSolution> bigArchive,
-				boolean useHistoryArchive) {
-			super(maxEvaluations, subpopulationSize, archive, problem, bigArchive, useHistoryArchive);
-		}
-		
-		public CMODESDENormBigDynamic(int maxEvaluations, int subpopulationSize, 
-				AbstractBoundedArchive<DoubleSolution> archive,
-				DoubleProblem problem, NonDominatedSolutionListArchive<DoubleSolution> bigArchive,
-				boolean useHistoryArchive, boolean evaluateBigArchive) {
-			super(maxEvaluations, subpopulationSize, archive, problem, bigArchive, useHistoryArchive, evaluateBigArchive);
+				DoubleProblem problem, NonDominatedSolutionListArchive<DoubleSolution> externalArchive,
+				boolean useHistoryArchive, boolean evaluateExternalArchive,
+				List<IScheduleRepairStrategy> repairStrategies) {
+			super(maxEvaluations, subpopulationSize, archive, problem, externalArchive, useHistoryArchive, evaluateExternalArchive, repairStrategies);
 		}
     	
     }

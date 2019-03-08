@@ -1,18 +1,21 @@
 {
   "numberOfRuns": 30,
   "instanceFiles": [
-    "project-conf/dynamic-extended/dynamic_example_new1.json",
-    "project-conf/dynamic-extended/dynamic_example_new6.json",
-    "project-conf/dynamic-extended/dynamic_example_new10.json",
-	"project-conf/dynamic-extended/dynamic_example_new15.json"
+    "project-conf/dynamic-extended/dynamic_example_new1.json"
   ],
   "algorithms": [
-  	"CMODE",
-  	"CMODESDE",
-  	"CMODESDENorm"
+  	"CMODESDEDynamic",
+  	"CMODESDEExternalDynamic",
+  	"CMODESDERepairDynamic",
+  	"CMODESDEExternalReDynamic",
+  	"CMODESDEFullReDynamic",
+  	"CMODESDEFullDynamic"
   ],
   "useExtendedIntance": true,
-  "useBigArchive": false,
+  "useExternalArchive": true,
+  "evaluateExternalArchive": true,
+  "useHistoryArchive": true,
+  "useRapairStrategies": true,
   "objectiveEvaluations": 20000,
   "populationSize": 100,
   "subpopulationSize": 20,
