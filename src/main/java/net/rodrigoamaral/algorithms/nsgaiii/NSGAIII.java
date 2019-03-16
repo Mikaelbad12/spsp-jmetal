@@ -1,12 +1,28 @@
 package net.rodrigoamaral.algorithms.nsgaiii;
 
-@SuppressWarnings({ "serial", "rawtypes" })
+@SuppressWarnings({ "serial", "rawtypes", "unchecked" })
 public class NSGAIII extends org.uma.jmetal.algorithm.multiobjective.nsgaiii.NSGAIII {
 
-    @SuppressWarnings("unchecked")
+	protected int evaluations;
+	protected int maxEvaluations;
+	
 	public NSGAIII(NSGAIIIBuilder builder) {
         super(builder);
-        setMaxPopulationSize(builder.getPopulationSize());
+        maxEvaluations = builder.getMaxIterations();
+    }
+    
+	@Override
+    protected void initProgress() {
+		evaluations = getMaxPopulationSize();
     }
 
+	@Override 
+	protected void updateProgress() {
+		evaluations += getMaxPopulationSize() ;
+	}
+
+	@Override 
+	protected boolean isStoppingConditionReached() {
+		return evaluations >= maxEvaluations;
+	}
 }
