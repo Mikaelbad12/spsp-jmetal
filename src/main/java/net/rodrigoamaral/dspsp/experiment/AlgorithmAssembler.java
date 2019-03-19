@@ -91,11 +91,12 @@ public class AlgorithmAssembler {
     public Algorithm<List<DoubleSolution>> assemble(Problem<DoubleSolution> problem, 
     		NonDominatedSolutionListArchive<DoubleSolution> externalArchive,
     		boolean useHistoryArchive, boolean evaluateExternalArchive, 
-    		List<IScheduleRepairStrategy> repairStrategies) {
+    		List<IScheduleRepairStrategy> repairStrategies, List<DoubleSolution> initialPopulation) {
     	this.externalArchive = externalArchive;
     	this.useHistoryArchive = useHistoryArchive;
     	this.evaluateExternalArchive = evaluateExternalArchive;
     	this.repairStrategies = repairStrategies;
+    	this.initialPopulation = initialPopulation;
     	return assemble(problem);
     }
     

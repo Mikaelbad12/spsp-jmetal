@@ -2,8 +2,6 @@ package net.rodrigoamaral.algorithms.nsgaiii;
 
 import java.util.List;
 
-import org.uma.jmetal.algorithm.multiobjective.nsgaiii.NSGAIII;
-import org.uma.jmetal.algorithm.multiobjective.nsgaiii.NSGAIIIBuilder;
 import org.uma.jmetal.problem.Problem;
 import org.uma.jmetal.solution.DoubleSolution;
 
@@ -12,7 +10,6 @@ public class NSGAIIIDynamicBuilder extends NSGAIIIBuilder{
 
     private List<DoubleSolution> initialPopulation;
 
-    @SuppressWarnings("unchecked")
 	public NSGAIIIDynamicBuilder(Problem problem) {
         super(problem);
     }

@@ -12,6 +12,10 @@ public class NewEmployeeStrategy extends EmployeeReturnStrategy {
     public NewEmployeeStrategy(DynamicProject _project, DynamicEmployee employee) {
         super(_project, employee);
     }
+    
+    public NewEmployeeStrategy(DoubleSolution _solution, DynamicProject _project, DynamicEmployee employee) {
+        super(_solution, _project, employee);
+    }
 
     @Override
     protected void addDebugLog(DynamicTask task, int i, double newDed, DoubleSolution solution) {

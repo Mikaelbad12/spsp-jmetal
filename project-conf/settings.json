@@ -16,6 +16,7 @@
   "evaluateExternalArchive": true,
   "useHistoryArchive": true,
   "useRapairStrategies": true,
+  "reusePopulation": false,
   "objectiveEvaluations": 20000,
   "populationSize": 100,
   "subpopulationSize": 20,

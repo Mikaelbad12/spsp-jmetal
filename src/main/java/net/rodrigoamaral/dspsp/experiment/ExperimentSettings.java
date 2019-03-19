@@ -28,6 +28,7 @@ public class ExperimentSettings {
     private Boolean useHistoryArchive = Boolean.FALSE;
     private Boolean evaluateExternalArchive = Boolean.FALSE;
     private Boolean useRapairStrategies = Boolean.FALSE;
+    private Boolean reusePopulation = Boolean.FALSE;
 
     public Integer getNumberOfRuns() {
         return numberOfRuns;
@@ -157,7 +158,15 @@ public class ExperimentSettings {
     	this.useRapairStrategies = useRapairStrategies;
     }
 
-    @Override
+	public Boolean getReusePopulation() {
+		return reusePopulation;
+	}
+
+	public void setReusePopulation(Boolean reusePopulation) {
+		this.reusePopulation = reusePopulation;
+	}
+
+	@Override
     public String toString() {
         StringBuilder sb = new StringBuilder(super.toString() + "{ " );
         sb.append("\n\tnumberOfRuns = " + numberOfRuns);

@@ -22,6 +22,7 @@ import net.rodrigoamaral.dspsp.project.DynamicProject;
 import net.rodrigoamaral.dspsp.project.events.DynamicEvent;
 import net.rodrigoamaral.dspsp.results.SolutionFileWriter;
 import net.rodrigoamaral.dspsp.solution.DynamicPopulationCreator;
+import net.rodrigoamaral.dspsp.solution.DynamicPopulationCreatorExtended;
 import net.rodrigoamaral.dspsp.solution.SchedulingHistory;
 import net.rodrigoamaral.dspsp.solution.SchedulingResult;
 import net.rodrigoamaral.dspsp.solution.repair.EmployeeLeaveStrategy;
@@ -60,6 +61,10 @@ public class ExperimentRunner {
     
     private boolean useHistoryArchive(){
     	return experimentSettings.getUseHistoryArchive();
+    }
+    
+    private boolean reusePopulation(){
+    	return experimentSettings.getReusePopulation();
     }
     
     private boolean evaluateExternalArchive(){
@@ -267,17 +272,29 @@ public class ExperimentRunner {
 										NonDominatedSolutionListArchive<DoubleSolution> externalArchive) {
 		
 		List<IScheduleRepairStrategy> repairStrategies = new ArrayList<>();
-		if(useRapeirStrategies()) {
+		if(useRapeirStrategies() || reusePopulation()) {
 			for(DynamicEvent event : events){
 		        switch (event.getType()) {
 		            case EMPLOYEE_LEAVE:
-		                repairStrategies.add(new EmployeeLeaveStrategy(project, (DynamicEmployee) event.getSubject()));
+		            	if(reusePopulation()) {
+		            		repairStrategies.add(new EmployeeLeaveStrategy(lastSchedule, project, (DynamicEmployee) event.getSubject()));
+		            	}else {
+		            		repairStrategies.add(new EmployeeLeaveStrategy(project, (DynamicEmployee) event.getSubject()));
+		            	}
 		                break;
 		            case EMPLOYEE_RETURN:
-		                repairStrategies.add(new EmployeeReturnStrategy(project, (DynamicEmployee) event.getSubject()));
+		            	if(reusePopulation()) {
+		            		repairStrategies.add(new EmployeeReturnStrategy(lastSchedule, project, (DynamicEmployee) event.getSubject()));
+		            	}else {
+		            		repairStrategies.add(new EmployeeReturnStrategy(project, (DynamicEmployee) event.getSubject()));
+		            	}
 		                break;
 		            case NEW_EMPLOYEE_ARRIVE:
-		                repairStrategies.add(new NewEmployeeStrategy(project, (DynamicEmployee) event.getSubject()));
+		            	if(reusePopulation()) {
+		            		repairStrategies.add(new NewEmployeeStrategy(lastSchedule, project, (DynamicEmployee) event.getSubject()));
+		            	}else {
+		            		repairStrategies.add(new NewEmployeeStrategy(project, (DynamicEmployee) event.getSubject()));
+		            	}
 		                break;
 		            default:
 		                break;
@@ -293,7 +310,19 @@ public class ExperimentRunner {
 
         // First rescheduling doesn't take history
         if ((reschedulings > 1) && (assembler.getAlgorithmID().toUpperCase().endsWith("DYNAMIC"))) {
-    		algorithm = assembler.assemble(problem, externalArchive, useHistoryArchive(), evaluateExternalArchive(), repairStrategies);
+        	List<DoubleSolution> initialPopulation = null;
+        	if(reusePopulation()) {
+	        	initialPopulation = new DynamicPopulationCreatorExtended(
+	                    problem,
+	                    history,
+	                    experimentSettings,
+	                    assembler.getAlgorithmID(),
+	                    repairStrategies
+	            ).create(reschedulings);
+        	}
+        	
+    		algorithm = assembler.assemble(problem, externalArchive, useHistoryArchive(), 
+    									   evaluateExternalArchive(), repairStrategies, initialPopulation);
         } else {
     		algorithm = assembler.assemble(problem, false);
         }
