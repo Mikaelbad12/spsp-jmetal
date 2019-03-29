@@ -18,15 +18,32 @@ import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import org.apache.commons.io.FileUtils;
+
 public class NormalizeObjectives {
 
 	public static void main(String[] args) throws IOException {
+		removeAllNOBJfolder();
 		removedLastArchiveIfAllValuesZero();
 		normalize("sT10_dT10_sE5_dE1_SK4-5", Arrays.asList("CMODESDEExternalDYNAMIC", "CMODESDEExternalReDYNAMIC", 
 															"CMODESDEDYNAMIC", "CMODESDEFullDYNAMIC",
 															"CMODESDEFullReDYNAMIC", "CMODESDERepairDYNAMIC"));
 	}
 	
+	private static void removeAllNOBJfolder() throws IOException {
+		Files.walk(Paths.get("results"))
+			 .filter(Files::isDirectory)
+			 .map(Path::toFile)
+			 .filter(file -> file.getName().equals("NOBJ"))
+			 .forEach(t -> {
+				try {
+					FileUtils.deleteDirectory(t);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			});
+	}
+
 	private static void removedLastArchiveIfAllValuesZero() throws IOException{
 		List<File> files = Files.walk(Paths.get("results"))
 				.filter(Files::isRegularFile)
