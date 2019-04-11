@@ -80,7 +80,7 @@ public class CMODEDynamic extends CMODE {
 			do{
 				x3 = random.nextInt(getArchive().size());
 			}while(x2 == x3 || i == x3);
-			DoubleSolution mutantVector = generateMutantVectorBigArchive(s, getArchive().get(x2), getArchive().get(x3), 
+			DoubleSolution mutantVector = generateMutantVectorExternalArchive(s, getArchive().get(x2), getArchive().get(x3), 
 																		externalArchive.get(random.nextInt(externalArchive.size())),
 																		mutationFactor);
 			DoubleSolution trialVector = generateTrialVector(s, mutantVector, crossoverFactor);
@@ -93,7 +93,7 @@ public class CMODEDynamic extends CMODE {
 		return offspring;
 	}
 	
-	protected DoubleSolution generateMutantVectorBigArchive(DoubleSolution solution, DoubleSolution individual2,
+	protected DoubleSolution generateMutantVectorExternalArchive(DoubleSolution solution, DoubleSolution individual2,
 			DoubleSolution individual3, DoubleSolution individualArchive, double mutationFactor) {
 		DoubleSolution mutant = (DoubleSolution)solution.copy();
 		for (int i = 0; i < solution.getNumberOfVariables(); i++) {
