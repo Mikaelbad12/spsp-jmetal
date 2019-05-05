@@ -74,7 +74,7 @@ public class Accuracy{
 			
 		};
 		
-		//TODO tirar duvida com Andre se é em relação a todas as execuções ou não
+		//TODO tirar duvida com Andre se eh em relacao a todas as execucoes ou nao
 		List<String> accList = new ArrayList<>();
 		for(Map<String, Map<String, List<String>>> alg: algorithms.values()) {
 			for(Map<String, List<String>> instance: alg.values()) {

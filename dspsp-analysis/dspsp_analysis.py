@@ -30,8 +30,8 @@ def max_event(ds):
     return ds["event"].max()
 
 
-def metrics_dataset(filepath="../hypervolume/metrics.csv"):
-    column_labels = ["algorithm", "instance", "execution", "event", "hypervolume"]
+def metrics_dataset(filepath="../hypervolume/metrics.csv", metric="hypervolume"):
+    column_labels = ["algorithm", "instance", "execution", "event", metric]
     data = pd.read_csv(filepath,
                        delimiter=" ",
                        header=None,
