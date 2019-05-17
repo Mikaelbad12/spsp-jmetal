@@ -25,9 +25,42 @@ public class NormalizeObjectives {
 	public static void main(String[] args) throws IOException {
 		removeAllNOBJfolder();
 		removedLastArchiveIfAllValuesZero();
-		normalize("sT10_dT10_sE5_dE1_SK4-5", Arrays.asList("CMODESDEExternalDYNAMIC", "CMODESDEExternalReDYNAMIC", 
-															"CMODESDEDYNAMIC", "CMODESDEFullDYNAMIC",
-															"CMODESDEFullReDYNAMIC", "CMODESDERepairDYNAMIC"));
+		normalize("sT10_dT10_sE5_dE1_SK4-5", Arrays.asList("CMODESDEDynamic", "CMODESDERepairDynamic", "CMODESDEExternalDynamic", 
+												"CMODESDEExternalReDynamic", "CMODESDEFullDynamic", "CMODESDEFullReDynamic", "NSGAIIIDynamic"));
+		normalize("sT10_dT10_sE10_dE1_SK4-5", Arrays.asList("CMODESDEDynamic", "CMODESDERepairDynamic", "CMODESDEExternalDynamic", 
+												"CMODESDEExternalReDynamic", "CMODESDEFullDynamic", "CMODESDEFullReDynamic", "NSGAIIIDynamic"));
+		normalize("sT10_dT10_sE15_dE1_SK4-5", Arrays.asList("CMODESDEDynamic", "CMODESDERepairDynamic", "CMODESDEExternalDynamic", 
+												"CMODESDEExternalReDynamic", "CMODESDEFullDynamic", "CMODESDEFullReDynamic", "NSGAIIIDynamic"));
+		normalize("sT10_dT10_sE5_dE1_SK6-7", Arrays.asList("CMODESDEDynamic", "CMODESDERepairDynamic", "CMODESDEExternalDynamic", 
+												"CMODESDEExternalReDynamic", "CMODESDEFullDynamic", "CMODESDEFullReDynamic", "NSGAIIIDynamic"));
+		normalize("sT10_dT10_sE10_dE1_SK6-7", Arrays.asList("CMODESDEDynamic", "CMODESDERepairDynamic", "CMODESDEExternalDynamic", 
+												"CMODESDEExternalReDynamic", "CMODESDEFullDynamic", "CMODESDEFullReDynamic", "NSGAIIIDynamic"));
+		normalize("sT10_dT10_sE15_dE1_SK6-7", Arrays.asList("CMODESDEDynamic", "CMODESDERepairDynamic", "CMODESDEExternalDynamic", 
+												"CMODESDEExternalReDynamic", "CMODESDEFullDynamic", "CMODESDEFullReDynamic", "NSGAIIIDynamic"));
+		normalize("sT20_dT10_sE5_dE1_SK4-5", Arrays.asList("CMODESDEDynamic", "CMODESDERepairDynamic", "CMODESDEExternalDynamic", 
+												"CMODESDEExternalReDynamic", "CMODESDEFullDynamic", "CMODESDEFullReDynamic", "NSGAIIIDynamic"));
+		normalize("sT20_dT10_sE10_dE1_SK4-5", Arrays.asList("CMODESDEDynamic", "CMODESDERepairDynamic", "CMODESDEExternalDynamic", 
+												"CMODESDEExternalReDynamic", "CMODESDEFullDynamic", "CMODESDEFullReDynamic", "NSGAIIIDynamic"));
+		normalize("sT20_dT10_sE15_dE1_SK4-5", Arrays.asList("CMODESDEDynamic", "CMODESDERepairDynamic", "CMODESDEExternalDynamic", 
+												"CMODESDEExternalReDynamic", "CMODESDEFullDynamic", "CMODESDEFullReDynamic", "NSGAIIIDynamic"));
+		normalize("sT20_dT10_sE5_dE1_SK6-7", Arrays.asList("CMODESDEDynamic", "CMODESDERepairDynamic", "CMODESDEExternalDynamic", 
+												"CMODESDEExternalReDynamic", "CMODESDEFullDynamic", "CMODESDEFullReDynamic", "NSGAIIIDynamic"));
+		normalize("sT20_dT10_sE10_dE1_SK6-7", Arrays.asList("CMODESDEDynamic", "CMODESDERepairDynamic", "CMODESDEExternalDynamic", 
+												"CMODESDEExternalReDynamic", "CMODESDEFullDynamic", "CMODESDEFullReDynamic", "NSGAIIIDynamic"));
+		normalize("sT20_dT10_sE15_dE1_SK6-7", Arrays.asList("CMODESDEDynamic", "CMODESDERepairDynamic", "CMODESDEExternalDynamic", 
+												"CMODESDEExternalReDynamic", "CMODESDEFullDynamic", "CMODESDEFullReDynamic", "NSGAIIIDynamic"));
+		normalize("sT30_dT10_sE5_dE1_SK4-5", Arrays.asList("CMODESDEDynamic", "CMODESDERepairDynamic", "CMODESDEExternalDynamic", 
+												"CMODESDEExternalReDynamic", "CMODESDEFullDynamic", "CMODESDEFullReDynamic", "NSGAIIIDynamic"));
+		normalize("sT30_dT10_sE10_dE1_SK4-5", Arrays.asList("CMODESDEDynamic", "CMODESDERepairDynamic", "CMODESDEExternalDynamic", 
+												"CMODESDEExternalReDynamic", "CMODESDEFullDynamic", "CMODESDEFullReDynamic", "NSGAIIIDynamic"));
+		normalize("sT30_dT10_sE15_dE1_SK4-5", Arrays.asList("CMODESDEDynamic", "CMODESDERepairDynamic", "CMODESDEExternalDynamic", 
+												"CMODESDEExternalReDynamic", "CMODESDEFullDynamic", "CMODESDEFullReDynamic", "NSGAIIIDynamic"));
+		normalize("sT30_dT10_sE5_dE1_SK6-7", Arrays.asList("CMODESDEDynamic", "CMODESDERepairDynamic", "CMODESDEExternalDynamic", 
+												"CMODESDEExternalReDynamic", "CMODESDEFullDynamic", "CMODESDEFullReDynamic", "NSGAIIIDynamic"));
+		normalize("sT30_dT10_sE10_dE1_SK6-7", Arrays.asList("CMODESDEDynamic", "CMODESDERepairDynamic", "CMODESDEExternalDynamic", 
+												"CMODESDEExternalReDynamic", "CMODESDEFullDynamic", "CMODESDEFullReDynamic", "NSGAIIIDynamic"));
+		normalize("sT30_dT10_sE15_dE1_SK6-7", Arrays.asList("CMODESDEDynamic", "CMODESDERepairDynamic", "CMODESDEExternalDynamic", 
+												"CMODESDEExternalReDynamic", "CMODESDEFullDynamic", "CMODESDEFullReDynamic", "NSGAIIIDynamic"));
 	}
 	
 	private static void removeAllNOBJfolder() throws IOException {
@@ -107,7 +140,7 @@ public class NormalizeObjectives {
 		toRemove.forEach(f -> f.delete());
 	}
 	
-	private static void normalize(String filterInstance, List<String> filterAlgorithms) throws IOException{
+	private static List<File> getOBJFiles(String filterInstance, List<String> filterAlgorithms) throws IOException{
 		Predicate<File> instancePredicate = new Predicate<File>() {
 
 			@Override
@@ -126,7 +159,7 @@ public class NormalizeObjectives {
 				if(filterAlgorithms == null || filterAlgorithms.isEmpty()) {
 					return true;
 				}
-				
+
 				for(String algorithm: filterAlgorithms) {
 					if(file.getName().contains(algorithm.toUpperCase()+"-")) {
 						return true;
@@ -136,18 +169,44 @@ public class NormalizeObjectives {
 			}
 		};
 		
-		List<File> files = Files.walk(Paths.get("results"))
-							.filter(Files::isRegularFile)
-							.map(Path::toFile)
-							.filter(file -> file.getName().startsWith("OBJ"))
-							.filter(instancePredicate)
-							.filter(algorithmPredicate)
-							.collect(Collectors.toList());
+		return Files.walk(Paths.get("results"))
+					.filter(Files::isRegularFile)
+					.map(Path::toFile)
+					.filter(file -> file.getName().startsWith("OBJ"))
+					.filter(instancePredicate)
+					.filter(algorithmPredicate)
+					.collect(Collectors.toList());
+	}
+	
+	private static double[] findMaxValues(String filterInstance, List<String> filterAlgorithms) throws IOException {
+		List<File> files = getOBJFiles(filterInstance, filterAlgorithms);
 		
 		double[] maxValue = new double[]{Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, 
-									Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY};
+										Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY};
+		
+		for(File file: files){
+			BufferedReader br = new BufferedReader(new FileReader(file));
+			List<String> lines = br.lines().collect(Collectors.toList());
+			br.close();
+			for(String line: lines){
+				String[] objs = line.split(" ");
+				for(int i = 0; i < objs.length; i++){
+					double objValue = Double.valueOf(objs[i]);
+					if(objValue > maxValue[i]){
+						maxValue[i] = objValue;
+					}
+				}
+			}
+		}
+		return maxValue;
+	}
+	
+	private static double[] findMinValues(String filterInstance, List<String> filterAlgorithms) throws IOException {
+		List<File> files = getOBJFiles(filterInstance, filterAlgorithms);
+		
 		double[] minValue = new double[]{Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE, 
-									Double.MAX_VALUE, Double.MAX_VALUE};
+										Double.MAX_VALUE, Double.MAX_VALUE};
+		
 		for(File file: files){
 			BufferedReader br = new BufferedReader(new FileReader(file));
 			List<String> lines = br.lines().collect(Collectors.toList());
@@ -158,12 +217,18 @@ public class NormalizeObjectives {
 					double objValue = Double.valueOf(objs[i]);
 					if (objValue < minValue[i]) {
 						minValue[i] = objValue;
-					}else if(objValue > maxValue[i]){
-						maxValue[i] = objValue;
 					}
 				}
 			}
 		}
+		return minValue;
+	}
+	
+	private static void normalize(String filterInstance, List<String> filterAlgorithms) throws IOException{
+		double[] maxValue = findMaxValues(filterInstance, filterAlgorithms);
+		double[] minValue = findMinValues(filterInstance, filterAlgorithms);
+		
+		List<File> files = getOBJFiles(filterInstance, filterAlgorithms);
 		
 		for(File file: files){
 			BufferedReader br = new BufferedReader(new FileReader(file));
