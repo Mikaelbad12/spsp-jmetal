@@ -6,6 +6,8 @@ import org.uma.jmetal.operator.impl.mutation.PolynomialMutation;
 import org.uma.jmetal.problem.DoubleProblem;
 import org.uma.jmetal.solution.DoubleSolution;
 import org.uma.jmetal.util.AlgorithmBuilder;
+import org.uma.jmetal.util.archive.Archive;
+import org.uma.jmetal.util.archive.impl.NonDominatedSolutionListArchive;
 import org.uma.jmetal.util.evaluator.SolutionListEvaluator;
 import org.uma.jmetal.util.evaluator.impl.SequentialSolutionListEvaluator;
 
@@ -18,6 +20,7 @@ public class MS2MOBuilder implements AlgorithmBuilder {
     private int maxIterations;
     private int swapInterval;
     protected int archiveSize;
+    private Archive globalArchive = new NonDominatedSolutionListArchive();
     private ArchiveType firstArchiveType;
     private ArchiveType secondArchiveType;
     protected MutationOperator<DoubleSolution> mutationOperator;
@@ -27,6 +30,11 @@ public class MS2MOBuilder implements AlgorithmBuilder {
 
     public MS2MOBuilder(DoubleProblem problem) {
         setDefaultParams(problem);
+    }
+    
+    public MS2MOBuilder(DoubleProblem problem, Archive archive) {
+        setDefaultParams(problem);
+        this.globalArchive = archive;
     }
 
     private void setDefaultParams(DoubleProblem problem) {
@@ -52,7 +60,7 @@ public class MS2MOBuilder implements AlgorithmBuilder {
         if (swarms == null || swarms.size() == 0) {
             throw new RuntimeException("MS2MO must have at least one swarm.");
         }
-        return new MS2MO(swarms, maxIterations, swapInterval, topology);
+        return new MS2MO(swarms, maxIterations, swapInterval, topology, globalArchive);
     }
 
     public MS2MOBuilder addSwarm(ISwarm swarm) {

@@ -136,10 +136,11 @@ public class AlgorithmAssembler {
 
         } else if ("MS2MODYNAMIC".equals(algorithmID.toUpperCase())) {
 //            mutation = new DSPSPRepairMutation();
-
+        	BoundedArchive<DoubleSolution> archive = new CrowdingDistanceArchive<DoubleSolution>(swarmSize*numberOfSwarms) ;
+        	
             List<ISwarm> swarms = createSwarms((DoubleProblem) problem, mutation, initialPopulation);
 
-            return new MS2MOBuilder((DoubleProblem)problem)
+            return new MS2MOBuilder((DoubleProblem)problem, archive)
                     .addSwarms(swarms)
                     .setMaxIterations(maxMultiSwarmIterations)
                     .build();
@@ -151,10 +152,11 @@ public class AlgorithmAssembler {
     }
 
     private List<ISwarm> createSwarms(DoubleProblem problem, MutationOperator<DoubleSolution> mutation, List<DoubleSolution> initialPopulation_) {
-        BoundedArchive<DoubleSolution> archive = new CrowdingDistanceArchive<DoubleSolution>(100) ;
-
+        
         List<ISwarm> swarms = new ArrayList<>();
         for (int i = 0; i < numberOfSwarms; i++) {
+        	BoundedArchive<DoubleSolution> archive = new CrowdingDistanceArchive<DoubleSolution>(swarmSize) ;
+
             if (initialPopulation_ == null) {
                 swarms.add(
                     new SMPSOBuilder(problem, archive)

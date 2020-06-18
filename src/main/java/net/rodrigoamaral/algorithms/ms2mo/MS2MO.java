@@ -22,16 +22,16 @@ public class MS2MO implements Algorithm {
 
     /**
      * Constructor
-     */
-    public MS2MO(List<ISwarm> swarms, int maxIterations, int swapInterval, TopologyType topology) {
+     */    
+    public MS2MO(List<ISwarm> swarms, int maxIterations, int swapInterval, TopologyType topology, Archive archive) {
         this.swarms = swarms;
         this.maxIterations = maxIterations;
 //        this.swapInterval = swapInterval;
         this.swapInterval = Math.round(maxIterations) / 2;
         this.topology = topology;
-        this.globalArchive = new NonDominatedSolutionListArchive();
+        this.globalArchive = archive;
     }
-
+    
     @Override
     public void run() {
         runIterations();
