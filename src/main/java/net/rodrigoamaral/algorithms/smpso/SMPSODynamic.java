@@ -33,7 +33,10 @@ public class SMPSODynamic extends SMPSO implements ISwarm {
     protected List<DoubleSolution> createInitialSwarm() {
 
         assert initialPopulation.size() >= getSwarmSize();
-
+        
+        if(getSwarm() != null)
+    		return getSwarm();
+        
         List<DoubleSolution> swarm = new ArrayList<>(getSwarmSize());
 
         DoubleSolution newSolution;

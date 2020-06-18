@@ -120,7 +120,7 @@ public class SMPSO extends AbstractParticleSwarmOptimization<DoubleSolution, Lis
 
     @Override
     protected void initProgress() {
-        iterations = 1;
+        iterations = 0;
         updateLeadersDensityEstimator();
     }
 
@@ -137,8 +137,12 @@ public class SMPSO extends AbstractParticleSwarmOptimization<DoubleSolution, Lis
 
     @Override
     protected List<DoubleSolution> createInitialSwarm() {
-        List<DoubleSolution> swarm = new ArrayList<>(swarmSize);
-
+        
+    	if(getSwarm() != null)
+    		return getSwarm();
+    	
+    	List<DoubleSolution> swarm = new ArrayList<>(swarmSize);
+        
         DoubleSolution newSolution;
         for (int i = 0; i < swarmSize; i++) {
             newSolution = problem.createSolution();

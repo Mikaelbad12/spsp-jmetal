@@ -1,6 +1,8 @@
 package net.rodrigoamaral.algorithms.ms2mo;
 
 import net.rodrigoamaral.algorithms.ISwarm;
+import net.rodrigoamaral.algorithms.smpso.SMPSO;
+
 import org.uma.jmetal.algorithm.Algorithm;
 import org.uma.jmetal.solution.DoubleSolution;
 import org.uma.jmetal.util.archive.Archive;
@@ -48,6 +50,7 @@ public class MS2MO implements Algorithm {
     private void runSwarms() {
         for (ISwarm swarm: swarms) {
             swarm.run();
+            ((SMPSO) swarm).setIterations(0);
         }
     }
 
